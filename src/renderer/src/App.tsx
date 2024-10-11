@@ -1,17 +1,19 @@
-import Versions from './components/Versions'
-import electronLogo from './assets/electron.svg'
+import Versions from "./components/Versions";
+import electronLogo from "./assets/electron.svg";
 
 function App(): JSX.Element {
-  const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
+  const ipcHandle = (): void => window.electron.ipcRenderer.send("ping");
 
   const listTables = async () => {
-    const tables = await window.api.listAvailableTables({ region: 'ap-southeast-2' })
-    console.log(tables)
-  }
+    const tables = await window.api.listAvailableTables({ region: "ap-southeast-2" });
+    console.log(tables);
+  };
 
   return (
     <>
-      <button type='button' onClick={listTables}>Test?</button>
+      <button type="button" onClick={listTables}>
+        Test?
+      </button>
       <img alt="logo" className="logo" src={electronLogo} />
       <div className="creator">Powered by electron-vite</div>
       <div className="text">
@@ -28,14 +30,14 @@ function App(): JSX.Element {
           </a>
         </div>
         <div className="action">
-          <button type='button' onClick={ipcHandle}>
+          <button type="button" onClick={ipcHandle}>
             Send IPC
           </button>
         </div>
       </div>
       <Versions />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
