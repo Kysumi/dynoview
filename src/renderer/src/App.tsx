@@ -1,9 +1,20 @@
 import Versions from "./components/Versions";
-import electronLogo from "./assets/electron.svg";
 import { useState, useEffect } from "react";
+import { Button, Select, Title, Text, AppShell, Group, Burger } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import type { TableInfo } from "src/preload/ddb/operations/get-table-information";
+import { useDisclosure } from "@mantine/hooks";
 
 function App(): JSX.Element {
-  const ipcHandle = (): void => window.electron.ipcRenderer.send("ping");
+  const [opened, { toggle }] = useDisclosure();
+  const form = useForm({
+    initialValues: {
+      table: "",
+    },
+    validate: {
+      table: (value) => (value === "" ? "Table is required" : null),
+    },
+  });
 
   const listTables = async () => {
     const tables = await window.api.listAvailableTables({ region: "ap-southeast-2" });
@@ -11,6 +22,9 @@ function App(): JSX.Element {
   };
 
   const [tables, setTables] = useState<string[]>([]);
+  const [tableInfo, setTableInfo] = useState<TableInfo | undefined>();
+
+  const { activeTable, setActiveTable } = useTableStore();
 
   useEffect(() => {
     if (tables.length === 0) {
@@ -18,50 +32,36 @@ function App(): JSX.Element {
     }
   }, [tables]);
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const table = event.currentTarget.table.value;
-    const info = await window.api.getTableInformation({ tableName: table, region: "ap-southeast-2" });
-    console.log(info);
+  const handleSubmit = async (values: typeof form.values) => {
+    const info = await window.api.getTableInformation({ tableName: values.table, region: "ap-southeast-2" });
+    setTableInfo(info);
   };
 
   return (
-    <>
-      <form onSubmit={handleSubmit}>
-        <select name="table" id="table">
-          {tables.map((table) => (
-            <option key={table} value={table}>
-              {table}
-            </option>
-          ))}
-        </select>
-        <button type="submit" onClick={listTables}>
-          Test?
-        </button>
-      </form>
-      <img alt="logo" className="logo" src={electronLogo} />
-      <div className="creator">Powered by electron-vite</div>
-      <div className="text">
-        Build an Electron app with <span className="react">React</span>
-        &nbsp;and <span className="ts">TypeScript</span>
-      </div>
-      <p className="tip">
-        Please try pressing <code>F12</code> to open the devTool
-      </p>
-      <div className="actions">
-        <div className="action">
-          <a href="https://electron-vite.org/" target="_blank" rel="noreferrer">
-            Documentation
-          </a>
+    <AppShell
+      header={{ height: 60 }}
+      navbar={{ width: 300, breakpoint: "sm", collapsed: { mobile: !opened } }}
+      padding="md"
+    >
+      <AppShell.Header>
+        <Group h="100%" px="md">
+          Hi?
+          <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" color="gray" />
+        </Group>
+      </AppShell.Header>
+      <AppShell.Navbar p="md">
+        <Select label="Active Table" placeholder="Select a table" data={tables} />
+
+        <div className="flex flex-col gap-2">
+          <Title order={3}>{tableInfo?.tableName}</Title>
+          <Text fz="md" lh="md">
+            {JSON.stringify(tableInfo?.indexes)}
+          </Text>
         </div>
-        <div className="action">
-          <button type="button" onClick={ipcHandle}>
-            Send IPC
-          </button>
-        </div>
-      </div>
-      <Versions />
-    </>
+        <Versions />
+      </AppShell.Navbar>
+      <AppShell.Main>Main</AppShell.Main>
+    </AppShell>
   );
 }
 

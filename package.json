@@ -26,9 +26,11 @@
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^3.0.0",
     "dynamodb-toolbox": "^1.10.2",
-    "electron-updater": "^6.1.7"
+    "electron-updater": "^6.1.7",
+    "zustand": "5.0.0-rc.2"
   },
   "devDependencies": {
+    "@redux-devtools/extension": "^3.3.0",
     "@biomejs/biome": "1.9.3",
     "@electron-toolkit/tsconfig": "^1.0.1",
     "@types/node": "^20.14.8",
