@@ -1,67 +1,88 @@
 import Versions from "./components/Versions";
 import { useState, useEffect } from "react";
-import { Button, Select, Title, Text, AppShell, Group, Burger } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import type { TableInfo } from "src/preload/ddb/operations/get-table-information";
-import { useDisclosure } from "@mantine/hooks";
+import useTableStore from "./store";
+import { Autocomplete, AutocompleteItem, Button } from "@nextui-org/react";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "./components/Sheet";
+import { regions } from "../../preload/ddb/config";
 
 function App(): JSX.Element {
-  const [opened, { toggle }] = useDisclosure();
-  const form = useForm({
-    initialValues: {
-      table: "",
-    },
-    validate: {
-      table: (value) => (value === "" ? "Table is required" : null),
-    },
-  });
+  const [tables, setTables] = useState<string[]>([]);
+  const { activeTable, setActiveTable, activeAWSRegion, setAWSRegion } = useTableStore();
 
   const listTables = async () => {
-    const tables = await window.api.listAvailableTables({ region: "ap-southeast-2" });
+    const tables = await window.api.listAvailableTables({ region: activeAWSRegion });
     return tables;
   };
 
-  const [tables, setTables] = useState<string[]>([]);
-  const [tableInfo, setTableInfo] = useState<TableInfo | undefined>();
-
-  const { activeTable, setActiveTable } = useTableStore();
-
   useEffect(() => {
-    if (tables.length === 0) {
-      listTables().then((tables) => setTables(tables));
-    }
-  }, [tables]);
-
-  const handleSubmit = async (values: typeof form.values) => {
-    const info = await window.api.getTableInformation({ tableName: values.table, region: "ap-southeast-2" });
-    setTableInfo(info);
-  };
+    listTables().then((tables) => setTables(tables));
+  }, [activeAWSRegion]);
 
   return (
-    <AppShell
-      header={{ height: 60 }}
-      navbar={{ width: 300, breakpoint: "sm", collapsed: { mobile: !opened } }}
-      padding="md"
-    >
-      <AppShell.Header>
-        <Group h="100%" px="md">
-          Hi?
-          <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" color="gray" />
-        </Group>
-      </AppShell.Header>
-      <AppShell.Navbar p="md">
-        <Select label="Active Table" placeholder="Select a table" data={tables} />
+    <div>
+      <div className="h-16 bg-gray-100">
+        <div className="flex items-center px-4">
+          <Sheet modal={false}>
+            <SheetTrigger asChild>
+              <Button>Open</Button>
+            </SheetTrigger>
+            <SheetContent side="left">
+              <SheetHeader>
+                <SheetTitle>Configuration</SheetTitle>
+                <SheetDescription>Change Paramaters</SheetDescription>
+                <Autocomplete
+                  label="Active Table"
+                  className="max-w-xs"
+                  isClearable={false}
+                  selectedKey={activeTable?.tableName ?? null}
+                  onSelectionChange={async (e) => {
+                    if (e?.toString()) {
+                      const info = await window.api.getTableInformation({
+                        tableName: e.toString(),
+                        region: activeAWSRegion,
+                      });
+                      setActiveTable(info);
+                    }
+                  }}
+                >
+                  {tables.map((table) => (
+                    <AutocompleteItem key={table} value={table}>
+                      {table}
+                    </AutocompleteItem>
+                  ))}
+                </Autocomplete>
 
+                <Autocomplete
+                  label="AWS Region"
+                  className="max-w-xs"
+                  isClearable={false}
+                  selectedKey={activeAWSRegion}
+                  onSelectionChange={(e) => {
+                    if (e?.toString()) {
+                      setActiveTable(undefined);
+                      setAWSRegion(e.toString());
+                    }
+                  }}
+                >
+                  {regions.map((region) => (
+                    <AutocompleteItem key={region} value={region}>
+                      {region}
+                    </AutocompleteItem>
+                  ))}
+                </Autocomplete>
+              </SheetHeader>
+            </SheetContent>
+          </Sheet>
+        </div>
+      </div>
+      <div>
         <div className="flex flex-col gap-2">
-          <Title order={3}>{tableInfo?.tableName}</Title>
-          <Text fz="md" lh="md">
-            {JSON.stringify(tableInfo?.indexes)}
-          </Text>
+          <h3 className="text-lg font-semibold">{activeTable?.tableName}</h3>
+          <pre className="text-sm">{JSON.stringify(activeTable?.indexes, null, 2)}</pre>
         </div>
         <Versions />
-      </AppShell.Navbar>
-      <AppShell.Main>Main</AppShell.Main>
-    </AppShell>
+      </div>
+    </div>
   );
 }
 
