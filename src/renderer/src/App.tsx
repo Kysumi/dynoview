@@ -1,6 +1,7 @@
 import Versions from "./components/Versions";
 import LeftNav from "./components/LeftNav/LeftNav";
 import useTableStore from "./store";
+import { QueryBuilder } from "./components/QueryBuilder/QueryBuilder";
 
 function App(): JSX.Element {
   const { activeTable } = useTableStore();
@@ -11,6 +12,8 @@ function App(): JSX.Element {
         <LeftNav />
       </div>
       <div>
+        {activeTable && <QueryBuilder />}
+
         <div className="flex flex-col gap-2">
           <h3 className="text-lg font-semibold">{activeTable?.tableName}</h3>
           <pre className="text-sm">{JSON.stringify(activeTable?.indexes, null, 2)}</pre>

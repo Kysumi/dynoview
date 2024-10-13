@@ -1,13 +1,9 @@
 import { contextBridge } from "electron";
 import { electronAPI } from "@electron-toolkit/preload";
-import { listAvailableTables } from "./ddb/operations/list-available-tables";
-import { getTableInformation } from "./ddb/operations/get-table-information";
+import * as ddbOperations from "./ddb/operations";
 
 // Custom APIs for renderer
-const api = {
-  listAvailableTables,
-  getTableInformation,
-};
+const api = ddbOperations;
 
 export type Api = typeof api;
 
