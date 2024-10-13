@@ -22,6 +22,7 @@ const useTableStore = create<TableState>()(
         setAWSRegion: (region) => set(() => ({ activeAWSRegion: region })),
       }),
       {
+        // persist the state to local storage
         name: "ddb-table-storage",
       },
     ),
