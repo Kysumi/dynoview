@@ -39,6 +39,7 @@ export default function LeftNav() {
             <SheetTitle>Configuration</SheetTitle>
             <SheetDescription>Change Paramaters</SheetDescription>
             <Autocomplete
+              key="tableSelector"
               label="Active Table"
               className="max-w-xs"
               isClearable={false}
@@ -61,6 +62,7 @@ export default function LeftNav() {
             </Autocomplete>
 
             <Autocomplete
+              key="regionSelector"
               label="AWS Region"
               className="max-w-xs"
               isClearable={false}
