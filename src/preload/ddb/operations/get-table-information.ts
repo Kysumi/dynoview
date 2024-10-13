@@ -1,32 +1,11 @@
 import { DescribeTableCommand, DynamoDBClient, type KeySchemaElement } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
+import type { TableInfo } from "@shared/table";
 
-interface Indexes {
-  primary: {
-    partitionKey: {
-      name: string;
-    };
-    searchKey: {
-      name: string;
-    };
-  };
-  gsiIndexes: {
-    name: string;
-    partitionKey: {
-      name: string;
-    };
-    searchKey: {
-      name: string;
-    };
-  }[];
-}
-
-export interface TableInfo {
-  tableName: string;
-  indexes: Indexes;
-}
-
-export const getTableInformation = async ({ tableName, region }: { tableName: string; region: string }) => {
+export const getTableInformation = async ({
+  tableName,
+  region,
+}: { tableName: string; region: string }): Promise<TableInfo> => {
   const client = DynamoDBDocument.from(
     new DynamoDBClient({
       region,
