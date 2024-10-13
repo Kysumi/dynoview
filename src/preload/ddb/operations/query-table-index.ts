@@ -1,5 +1,6 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocument, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { getTableClient } from "../table";
 
 interface QueryTableIndexParams {
   region: string;
@@ -20,11 +21,7 @@ interface QueryTableIndexParams {
 export const queryTableIndex = async (params: QueryTableIndexParams) => {
   const { region, tableName, indexName, partitionKey, partitionKeyValue, searchKeyValue, operator } = params;
 
-  const docClient = DynamoDBDocument.from(
-    new DynamoDBClient({
-      region,
-    }),
-  );
+  const dbClient = getTableClient(region);
 
   const command = new QueryCommand({
     TableName: tableName,
@@ -35,7 +32,7 @@ export const queryTableIndex = async (params: QueryTableIndexParams) => {
     },
   });
 
-  const response = await docClient.send(command);
+  const response = await dbClient.send(command);
 
   return response;
 };

@@ -1,14 +1,10 @@
-import { Table } from "dynamodb-toolbox/table";
-import { Entity } from "dynamodb-toolbox/entity";
-import { list } from "dynamodb-toolbox";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
 
-let region = "ap-southeast-2";
-let tableName: undefined | string = undefined;
-
-const DDBTable = new Table({
-  name: "DDBTable",
-  partitionKey: {
-    name: "id",
-    type: "string",
-  },
-});
+export const getTableClient = (region: string) => {
+  return DynamoDBDocument.from(
+    new DynamoDBClient({
+      region,
+    }),
+  );
+};
