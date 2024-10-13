@@ -29,9 +29,6 @@ importers:
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
-      dynamodb-toolbox:
-        specifier: ^1.10.2
-        version: 1.10.2(@aws-sdk/client-dynamodb@3.669.0)(@aws-sdk/lib-dynamodb@3.669.0(@aws-sdk/client-dynamodb@3.669.0))
       electron-updater:
         specifier: ^6.1.7
         version: 6.3.9
@@ -2580,13 +2577,6 @@ packages:
     resolution: {integrity: sha512-I9OvvrHp4pIARv4+x9iuewrWycX6CcZtoAu1XrzPxc5UygMJXJZYmBsynku8IkrJwgypE5DGNjDPmPRhDCptUg==}
     engines: {node: '>=10'}
 
-  dynamodb-toolbox@1.10.2:
-    resolution: {integrity: sha512-nacwTD7xMN60gBsc5yz3q7ZLLQSWQv2qnT2r5CdnPRklI9mRyS466OYQESwN4uiDr7XnCHnSUyEEW7Oj9XjM7w==}
-    engines: {node: '>=14.0.0'}
-    peerDependencies:
-      '@aws-sdk/client-dynamodb': ^3.0.0
-      '@aws-sdk/lib-dynamodb': ^3.0.0
-
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
 
@@ -2851,9 +2841,6 @@ packages:
   hosted-git-info@4.1.0:
     resolution: {integrity: sha512-kyCuEOWjJqZuDbRHzL8V93NzQhwIB71oFWSyzVo+KPZI+pnQPPxucdkrOZvkLRnrf5URsQM+IJ09Dw29cRALIA==}
     engines: {node: '>=10'}
-
-  hotscript@1.0.13:
-    resolution: {integrity: sha512-C++tTF1GqkGYecL+2S1wJTfoH6APGAsbb7PAWQ3iVIwgG/EFseAfEVOKFgAFq4yK3+6j1EjUD4UQ9dRJHX/sSQ==}
 
   http-cache-semantics@4.1.1:
     resolution: {integrity: sha512-er295DKPVsV82j5kw1Gjt+ADA/XYHsajl82cGNQG2eyoPkvgUhX+nDIyelzhIWbbsXP39EHcI6l5tYs2FYqYXQ==}
@@ -7575,12 +7562,6 @@ snapshots:
 
   dotenv@9.0.2: {}
 
-  dynamodb-toolbox@1.10.2(@aws-sdk/client-dynamodb@3.669.0)(@aws-sdk/lib-dynamodb@3.669.0(@aws-sdk/client-dynamodb@3.669.0)):
-    dependencies:
-      '@aws-sdk/client-dynamodb': 3.669.0
-      '@aws-sdk/lib-dynamodb': 3.669.0(@aws-sdk/client-dynamodb@3.669.0)
-      hotscript: 1.0.13
-
   eastasianwidth@0.2.0: {}
 
   ejs@3.1.10:
@@ -7922,8 +7903,6 @@ snapshots:
   hosted-git-info@4.1.0:
     dependencies:
       lru-cache: 6.0.0
-
-  hotscript@1.0.13: {}
 
   http-cache-semantics@4.1.1: {}
 
