@@ -1,6 +1,6 @@
 import { Autocomplete, AutocompleteItem, Button } from "@nextui-org/react";
 import { Database } from "lucide-react";
-import useTableStore from "../store";
+import useTableStore from "../../store";
 import {
   Sheet,
   SheetContent,

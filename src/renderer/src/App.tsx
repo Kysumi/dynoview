@@ -1,5 +1,5 @@
 import Versions from "./components/Versions";
-import LeftNav from "./LeftNav/LeftNav";
+import LeftNav from "./components/LeftNav/LeftNav";
 import useTableStore from "./store";
 
 function App(): JSX.Element {
