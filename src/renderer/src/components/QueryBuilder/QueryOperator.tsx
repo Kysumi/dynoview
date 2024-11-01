@@ -1,4 +1,5 @@
-import { Select, SelectItem } from "@nextui-org/react";
+import { forwardRef } from "react";
+import { Select, SelectItem, type SelectProps } from "@nextui-org/react";
 
 const operators = [
   { key: "=", label: "equal" },
@@ -10,12 +11,23 @@ const operators = [
   { key: "begins_with", label: "begins with" },
 ];
 
-export default function QueryOperator() {
+const QueryOperator = forwardRef<HTMLSelectElement, Omit<SelectProps, "children">>((props, ref) => {
   return (
-    <Select label="Operator" placeholder="Select an operator" defaultSelectedKeys={["eq"]} className="max-w-xs">
+    <Select
+      ref={ref}
+      label="Operator"
+      placeholder="Select an operator"
+      defaultSelectedKeys={["="]}
+      className="max-w-xs"
+      {...props}
+    >
       {operators.map((operator) => (
         <SelectItem key={operator.key}>{operator.label}</SelectItem>
       ))}
     </Select>
   );
-}
+});
+
+QueryOperator.displayName = "QueryOperator";
+
+export default QueryOperator;

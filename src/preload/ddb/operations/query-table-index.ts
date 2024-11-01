@@ -1,25 +1,9 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocument, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { getTableClient } from "../table";
+import type { TTableQuery } from "@shared/table-query";
 
-interface QueryTableIndexParams {
-  region: string;
-
-  tableName: string;
-  indexName: string;
-
-  partitionKey: string;
-  partitionKeyValue: string;
-  searchKey: {
-    operator: string;
-    value: string;
-  };
-
-  limit: number;
-}
-
-export const queryTableIndex = async (params: QueryTableIndexParams) => {
-  const { region, tableName, indexName, partitionKey, partitionKeyValue, searchKeyValue, operator } = params;
+export const queryTableIndex = async (params: TTableQuery) => {
+  const { region, tableName, indexName, partitionKey, partitionKeyValue } = params;
 
   const dbClient = getTableClient(region);
 

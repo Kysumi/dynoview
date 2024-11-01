@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import type {} from "@redux-devtools/extension"; // required for devtools typing
-import type { TableInfo } from "@shared/table";
+import type { TableInfo } from "@shared/table-info";
 
 interface TableState {
   setAWSRegion: (region: string) => void;
