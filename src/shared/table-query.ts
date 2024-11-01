@@ -12,7 +12,7 @@ export const TableQuery = z.object({
   searchKeyValue: z.string(),
   searchKeyOperator: z.string(),
 
-  limit: z.number(),
+  limit: z.number().optional(),
 });
 
 export type TTableQuery = z.infer<typeof TableQuery>;

@@ -54,7 +54,7 @@ export const getTableInformation = async ({
   return {
     tableName,
     indexes: {
-      primary: awsToApp(primaryIndex),
+      primary: { name: tableName, ...awsToApp(primaryIndex) },
       gsiIndexes: secondaryIndexes,
     },
   };

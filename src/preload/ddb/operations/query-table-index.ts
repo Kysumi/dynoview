@@ -9,7 +9,7 @@ export const queryTableIndex = async (params: TTableQuery) => {
 
   const command = new QueryCommand({
     TableName: tableName,
-    IndexName: indexName,
+    IndexName: indexName === tableName ? undefined : indexName,
     KeyConditionExpression: `${partitionKey} = :${partitionKey}`,
     ExpressionAttributeValues: {
       [`:${partitionKey}`]: partitionKeyValue,

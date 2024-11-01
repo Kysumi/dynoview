@@ -2,19 +2,21 @@ import { Button, Input, Select, SelectItem } from "@nextui-org/react";
 import useTableStore from "@renderer/store";
 import QueryOperator from "./QueryOperator";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TableQuery } from "@shared/table-query";
+import { TableQuery, type TTableQuery } from "@shared/table-query";
 
 export const Query = () => {
   const { activeTable, activeAWSRegion } = useTableStore();
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState(null);
 
   const {
+    control,
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+    setValue,
+  } = useForm<TTableQuery>({
     resolver: zodResolver(TableQuery),
   });
 
@@ -27,44 +29,62 @@ export const Query = () => {
     async (data) => {
       console.log(data);
 
-      const { indexName, partitionKey, partitionKeyValue, searchKeyOperator, searchKeyValue } = data;
-
-      const result = await window.api.queryTableIndex({
-        region: activeAWSRegion,
-        tableName: activeTable.tableName,
-        indexName: indexName,
-        partitionKey: partitionKey,
-        partitionKeyValue: partitionKeyValue,
-        searchKeyOperator: searchKeyOperator,
-        searchKeyValue: searchKeyValue,
-        limit: 50,
-      });
-
+      const result = await window.api.queryTableIndex(data);
       setResult(result);
     },
     (errors) => {
       console.log(errors);
     },
   );
+  console.log(activeTable.indexes);
 
   return (
     <form className="flex flex-col gap-2" onSubmit={onSubmit}>
       <input type="hidden" {...register("tableName")} value={activeTable.tableName} />
       <input type="hidden" {...register("region")} value={activeAWSRegion} />
+      <input type="hidden" {...register("limit", { valueAsNumber: true })} value={50} />
 
-      <div>{JSON.stringify(errors, null, 2)}</div>
       {/* Index */}
-      <Select required={true} key="index" {...register("indexName")} label="Index" placeholder="Select an index">
-        {indexes.map((index) => (
-          <SelectItem key={index.partitionKey.name}>{index.partitionKey.name}</SelectItem>
-        ))}
-      </Select>
+      <Controller
+        control={control}
+        name="indexName"
+        rules={{ required: true }}
+        defaultValue={indexes[0].partitionKey.name}
+        render={({ field }) => (
+          <Select
+            required={true}
+            key="index"
+            {...field}
+            onChange={(e) => {
+              console.log(e);
+              // Set the index name
+              field.onChange(e);
+
+              const index = indexes.find((index) => index.name === e.target.value);
+
+              if (!index) {
+                return;
+              }
+
+              setValue("partitionKey", index.partitionKey.name);
+            }}
+            label="Index"
+            placeholder="Select an index"
+          >
+            {indexes.map((index) => (
+              <SelectItem key={index.name}>{index.name}</SelectItem>
+            ))}
+          </Select>
+        )}
+      />
 
       <Input required={true} label="Partition Key" {...register("partitionKeyValue")} />
 
       {/* Search Key */}
       <QueryOperator {...register("searchKeyOperator")} />
       <Input label="Search Key Value" {...register("searchKeyValue")} />
+
+      <pre>{JSON.stringify(result, null, 2)}</pre>
 
       <Button type="submit">Run Query</Button>
     </form>

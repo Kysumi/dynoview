@@ -1,5 +1,6 @@
 export interface Indexes {
   primary: {
+    name: string;
     partitionKey: {
       name: string;
     };
