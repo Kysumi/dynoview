@@ -1,4 +1,4 @@
-import { Tabs, Tab, Card, CardBody, CardHeader } from "@nextui-org/react";
+import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
 import { Query } from "./Query";
 import { Scan } from "./Scan";
 

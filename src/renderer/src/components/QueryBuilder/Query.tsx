@@ -5,18 +5,13 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TableQuery, type TTableQuery } from "@shared/table-query";
+import type { QueryCommandOutput } from "@aws-sdk/client-dynamodb";
 
 export const Query = () => {
   const { activeTable, activeAWSRegion } = useTableStore();
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState<QueryCommandOutput | null>(null);
 
-  const {
-    control,
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-  } = useForm<TTableQuery>({
+  const { control, register, handleSubmit, setValue } = useForm<TTableQuery>({
     resolver: zodResolver(TableQuery),
   });
 
