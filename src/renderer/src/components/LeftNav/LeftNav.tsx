@@ -38,7 +38,7 @@ export default function LeftNav() {
           </Button>
         </SheetTrigger>
 
-        <SheetContent side="left" className="flex flex-col gap-4">
+        <SheetContent side="left" className="flex flex-col gap-4 overflow-y-auto">
           <SheetHeader>
             <SheetTitle>Configuration</SheetTitle>
             <SheetDescription>Change Paramaters</SheetDescription>
