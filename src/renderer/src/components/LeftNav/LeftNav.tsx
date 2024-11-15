@@ -1,5 +1,4 @@
-import { Autocomplete, AutocompleteItem, Button } from "@nextui-org/react";
-import { Database } from "lucide-react";
+import { Database as DatabaseIcon } from "lucide-react";
 import useTableStore from "../../store";
 import {
   Sheet,
@@ -12,6 +11,8 @@ import {
 import { useEffect, useState } from "react";
 import { regions } from "@shared/available-regions";
 import Versions from "../Versions";
+import { Button } from "../Button";
+import { ComboBox } from "../ComboBox";
 
 export default function LeftNav() {
   const [tables, setTables] = useState<string[]>([]);
@@ -22,16 +23,17 @@ export default function LeftNav() {
     return tables;
   };
 
+  // biome-ignore lint: We don't want to watch for table changes
   useEffect(() => {
     listTables().then((tables) => setTables(tables));
   }, [activeAWSRegion]);
 
   return (
-    <div className="flex items-center px-4">
+    <div className="flex">
       <Sheet modal={false}>
         <SheetTrigger asChild>
           <Button>
-            <Database />
+            <DatabaseIcon />
             {activeTable?.tableName ?? "Select Table"}
           </Button>
         </SheetTrigger>
@@ -42,48 +44,28 @@ export default function LeftNav() {
             <SheetDescription>Change Paramaters</SheetDescription>
           </SheetHeader>
 
-          <Autocomplete
-            key="tableSelector"
-            label="Active Table"
-            className="max-w-xs"
-            isClearable={false}
-            selectedKey={activeTable?.tableName ?? null}
-            onSelectionChange={async (e) => {
-              if (e?.toString()) {
-                const info = await window.api.getTableInformation({
-                  tableName: e.toString(),
-                  region: activeAWSRegion,
-                });
-                setActiveTable(info);
-              }
+          <ComboBox
+            placeHolder="Select Table"
+            selectedOption={activeTable?.tableName}
+            options={tables.map((table) => ({ value: table, label: table }))}
+            onChange={async (option): Promise<void> => {
+              const info = await window.api.getTableInformation({
+                tableName: option.value,
+                region: activeAWSRegion,
+              });
+              setActiveTable(info);
             }}
-          >
-            {tables.map((table) => (
-              <AutocompleteItem key={table} value={table}>
-                {table}
-              </AutocompleteItem>
-            ))}
-          </Autocomplete>
+          />
 
-          <Autocomplete
-            key="regionSelector"
-            label="AWS Region"
-            className="max-w-xs"
-            isClearable={false}
-            selectedKey={activeAWSRegion}
-            onSelectionChange={(e) => {
-              if (e?.toString()) {
-                setActiveTable(undefined);
-                setAWSRegion(e.toString());
-              }
+          <ComboBox
+            placeHolder="Select Region"
+            selectedOption={activeAWSRegion}
+            options={regions.map((region) => ({ value: region, label: region }))}
+            onChange={(option) => {
+              setActiveTable(undefined);
+              setAWSRegion(option.value);
             }}
-          >
-            {regions.map((region) => (
-              <AutocompleteItem key={region} value={region}>
-                {region}
-              </AutocompleteItem>
-            ))}
-          </Autocomplete>
+          />
 
           <div className="flex flex-col gap-2">
             <h3 className="text-lg font-semibold">{activeTable?.tableName}</h3>

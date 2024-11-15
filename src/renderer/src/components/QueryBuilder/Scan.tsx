@@ -1,6 +1,6 @@
-import { Button } from "@nextui-org/react";
 import useTableStore from "@renderer/store";
 import { useState } from "react";
+import { Button } from "../Button";
 
 export const Scan = () => {
   const [result, setResult] = useState<any>(null);

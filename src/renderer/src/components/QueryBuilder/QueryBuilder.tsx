@@ -1,4 +1,4 @@
-import { Tabs, Tab, Card, CardBody } from "@nextui-org/react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../Tabs";
 import { Query } from "./Query";
 import { Scan } from "./Scan";
 
@@ -17,16 +17,22 @@ const tabs = [
 
 export const QueryBuilder = () => {
   return (
-    <div>
-      <Tabs items={tabs}>
-        {(item) => (
-          <Tab key={item.id} title={item.label}>
-            <Card>
-              <CardBody>{item.content}</CardBody>
-            </Card>
-          </Tab>
-        )}
-      </Tabs>
-    </div>
+    <Tabs defaultValue="query">
+      <TabsList>
+        {tabs.map((tab) => {
+          return (
+            <TabsTrigger key={tab.id} value={tab.id}>
+              {tab.label}
+            </TabsTrigger>
+          );
+        })}
+      </TabsList>
+
+      {tabs.map((tab) => (
+        <TabsContent key={tab.id} value={tab.id}>
+          {tab.content}
+        </TabsContent>
+      ))}
+    </Tabs>
   );
 };

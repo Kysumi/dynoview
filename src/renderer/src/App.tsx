@@ -6,7 +6,7 @@ function App(): JSX.Element {
   const { activeTable } = useTableStore();
 
   return (
-    <div>
+    <div className="p-2">
       <div className="h-16 bg-gray-100">
         <LeftNav />
       </div>

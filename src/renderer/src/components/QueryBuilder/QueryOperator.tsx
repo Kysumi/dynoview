@@ -1,32 +1,37 @@
-import { forwardRef } from "react";
-import { Select, SelectItem, type SelectProps } from "@nextui-org/react";
+import { SelectItem, Select, SelectTrigger, SelectValue, SelectContent } from "../Select";
 
 const operators = [
-  { key: "=", label: "equal" },
-  { key: ">", label: "greater than" },
-  { key: "<", label: "less than" },
-  { key: ">=", label: "greater than or equal to" },
-  { key: "<=", label: "less than or equal to" },
-  { key: "between", label: "between" },
-  { key: "begins_with", label: "begins with" },
+  { key: "=", label: "Equal to" },
+  { key: ">", label: "Greater than" },
+  { key: "<", label: "Less than" },
+  { key: ">=", label: "Greater than or equal to" },
+  { key: "<=", label: "Less than or equal to" },
+  { key: "between", label: "Between" },
+  { key: "begins_with", label: "Begins with" },
 ];
 
-const QueryOperator = forwardRef<HTMLSelectElement, Omit<SelectProps, "children">>((props, ref) => {
+interface SelectProps {
+  value: string;
+  onChange: (value: string) => void;
+}
+
+const QueryOperator = ({ onChange, value }: SelectProps) => {
   return (
-    <Select
-      ref={ref}
-      label="Operator"
-      placeholder="Select an operator"
-      defaultSelectedKeys={["="]}
-      className="max-w-xs"
-      {...props}
-    >
-      {operators.map((operator) => (
-        <SelectItem key={operator.key}>{operator.label}</SelectItem>
-      ))}
+    <Select defaultValue={value} onValueChange={onChange}>
+      <SelectTrigger className="max-w-xs">
+        <SelectValue placeholder="Select an operator" />
+      </SelectTrigger>
+
+      <SelectContent>
+        {operators.map((operator) => (
+          <SelectItem key={operator.key} value={operator.key}>
+            {operator.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
     </Select>
   );
-});
+};
 
 QueryOperator.displayName = "QueryOperator";
 
