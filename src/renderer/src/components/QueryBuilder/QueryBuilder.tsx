@@ -27,7 +27,6 @@ export const QueryBuilder = () => {
           );
         })}
       </TabsList>
-
       {tabs.map((tab) => (
         <TabsContent key={tab.id} value={tab.id}>
           {tab.content}
