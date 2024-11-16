@@ -74,7 +74,7 @@ export const PageTabs = () => {
   );
 
   return (
-    <Tabs defaultValue="1">
+    <Tabs defaultValue={pages[0].id}>
       <TabsList>
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={pages} strategy={verticalListSortingStrategy}>
