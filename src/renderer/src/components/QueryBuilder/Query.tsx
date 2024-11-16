@@ -10,6 +10,8 @@ import { Button } from "../Button";
 import { Input } from "../Input";
 import { Form, FormItem, FormLabel } from "../Form";
 import { useTab } from "@renderer/hooks/TabContext";
+import { ResultsTable } from "./ResultsTable";
+import { buildColumns } from "./buildColumns";
 
 export const Query = () => {
   const { tab } = useTab();
@@ -107,7 +109,7 @@ export const Query = () => {
         </div>
         <Button type="submit">Run Query</Button>
 
-        <pre>{JSON.stringify(result, null, 2)}</pre>
+        <ResultsTable data={result?.Items ?? []} columns={buildColumns(result, { maxDepth: 1 })} />
       </form>
     </Form>
   );

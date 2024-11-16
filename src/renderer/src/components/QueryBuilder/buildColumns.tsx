@@ -1,3 +1,7 @@
+import type { ColumnDef } from "@tanstack/react-table";
+import { DataCell } from "../Table/DataCell";
+import { TableDataType } from "../Table/TableDataType";
+
 type Column = {
   accessorKey: string;
   header: string;
@@ -7,7 +11,7 @@ type BuildColumnsOptions = {
   maxDepth?: number; // undefined means no limit
 };
 
-export const buildColumns = (data: unknown, options: BuildColumnsOptions = {}): Column[] => {
+export const buildColumns = (data: unknown, options: BuildColumnsOptions = {}): ColumnDef<{}>[] => {
   const columns = new Set<string>();
 
   const flattenObject = (obj: Record<string, any>, prefix = "", currentDepth = 0): void => {
@@ -49,10 +53,13 @@ export const buildColumns = (data: unknown, options: BuildColumnsOptions = {}): 
 
   const sortedColumns = Array.from(columns)
     .filter(Boolean)
-    .map((key) => ({
-      accessorKey: key,
-      header: key,
-    }))
+    .map(
+      (key): ColumnDef<TableDataType> => ({
+        accessorKey: key,
+        header: key,
+        cell: (attr) => <DataCell {...attr} />,
+      }),
+    )
     .sort((a, b) => a.accessorKey.localeCompare(b.accessorKey));
 
   return sortedColumns;
