@@ -17,7 +17,6 @@ const useTableStore = create<TableState>()(
       (set) => ({
         activeTable: undefined,
         setActiveTable: (table) => set(() => ({ activeTable: table })),
-        availableTables: [],
         activeAWSRegion: "ap-southeast-2",
         setAWSRegion: (region) => set(() => ({ activeAWSRegion: region })),
       }),

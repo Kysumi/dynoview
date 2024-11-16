@@ -11,14 +11,8 @@ export const DatabaseSelector = () => {
   const [tables, setTables] = useState<string[]>([]);
   const { activeTable, setActiveTable, activeAWSRegion, setAWSRegion } = useTableStore();
 
-  const listTables = async () => {
-    const tables = await window.api.listAvailableTables({ region: activeAWSRegion });
-    return tables;
-  };
-
-  // biome-ignore lint: We don't want to watch for table changes
   useEffect(() => {
-    listTables().then((tables) => setTables(tables));
+    window.api.listAvailableTables({ region: activeAWSRegion }).then((tables) => setTables(tables));
   }, [activeAWSRegion]);
 
   return (
