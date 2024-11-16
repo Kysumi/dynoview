@@ -1,11 +1,11 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { DataCell } from "../Table/DataCell";
-import { TableDataType } from "../Table/TableDataType";
+import type { TableDataType } from "../Table/TableDataType";
 
 type Column = {
   accessorKey: string;
   header: string;
-};
+} & Pick<ColumnDef<TableDataType>, "cell">;
 
 type BuildColumnsOptions = {
   maxDepth?: number; // undefined means no limit
@@ -54,7 +54,7 @@ export const buildColumns = (data: unknown, options: BuildColumnsOptions = {}): 
   const sortedColumns = Array.from(columns)
     .filter(Boolean)
     .map(
-      (key): ColumnDef<TableDataType> => ({
+      (key): Column => ({
         accessorKey: key,
         header: key,
         cell: (attr) => <DataCell {...attr} />,

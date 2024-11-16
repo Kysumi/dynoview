@@ -1,9 +1,4 @@
-import type { ColumnDef } from "@tanstack/react-table";
-import type { TableDataType } from "./TableDataType";
-
-type CellFuncType = ColumnDef<TableDataType>["cell"];
-
-export const DataCell: CellFuncType = ({ column, getValue }) => {
+export const DataCell = ({ column, getValue }) => {
   const value = getValue();
 
   if (typeof value === "string") {
