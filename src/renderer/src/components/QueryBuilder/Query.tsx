@@ -105,9 +105,9 @@ export const Query = () => {
             <Input className="w-full" placeholder="Enter search key value" {...register("searchKeyValue")} />
           </FormItem>
         </div>
-        <pre>{JSON.stringify(result, null, 2)}</pre>
-
         <Button type="submit">Run Query</Button>
+
+        <pre>{JSON.stringify(result, null, 2)}</pre>
       </form>
     </Form>
   );
