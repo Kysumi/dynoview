@@ -1,4 +1,4 @@
-import { Database, User, Settings } from "lucide-react";
+import { Database, User, Settings, Package } from "lucide-react";
 import {
   SidebarContent,
   SidebarGroup,
@@ -23,6 +23,11 @@ const items = [
   {
     title: "Models",
     url: "/models",
+    icon: Package,
+  },
+  {
+    title: "Settings",
+    url: "/settings",
     icon: Settings,
   },
 ];
