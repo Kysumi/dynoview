@@ -1,4 +1,4 @@
-import { Database, User, Settings, Package } from "lucide-react";
+import { Database, Settings, Package } from "lucide-react";
 import {
   SidebarContent,
   SidebarGroup,
@@ -13,6 +13,7 @@ import {
 } from "../SideBar";
 import { DatabaseSelector } from "./DatabaseSelector";
 import Versions from "../Versions";
+import { Link, useLocation } from "react-router-dom";
 
 const items = [
   {
@@ -33,6 +34,7 @@ const items = [
 ];
 
 export const AppSidebar = () => {
+  const location = useLocation();
   return (
     <Sidebar>
       <SidebarHeader>
@@ -44,16 +46,18 @@ export const AppSidebar = () => {
           <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {items.map((item) => {
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton isActive={item.url === location.pathname} asChild>
+                      <Link to={item.url}>
+                        <item.icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
