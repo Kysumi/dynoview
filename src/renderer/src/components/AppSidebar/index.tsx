@@ -12,6 +12,7 @@ import {
   SidebarMenuButton,
 } from "../SideBar";
 import { DatabaseSelector } from "./DatabaseSelector";
+import Versions from "../Versions";
 
 const items = [
   {
@@ -57,7 +58,9 @@ export const AppSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter />
+      <SidebarFooter>
+        <Versions />
+      </SidebarFooter>
     </Sidebar>
   );
 };
