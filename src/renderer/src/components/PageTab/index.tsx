@@ -23,9 +23,9 @@ export const PageTab = ({ id, label, onRemove }: { id: string; label: string; on
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div ref={setNodeRef} style={style} {...attributes}>
       <TabsTrigger className="flex items-center gap-2 h-8" key={id} value={id}>
-        <Button variant="ghost" className="cursor-move">
+        <Button variant="ghost" className="cursor-move" {...listeners}>
           <GripVertical />
         </Button>
         <span className="truncate">{label}</span>
