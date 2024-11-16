@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../Tabs";
 import useTableStore from "@renderer/store";
 import { GripVertical, Plus, X } from "lucide-react";
 import { Button } from "../Button";
+import { TabProvider } from "@renderer/hooks/TabContext";
 
 export const PageTab = ({ id, name, onRemove }: { id: string; name: string; onRemove: (id: string) => void }) => {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: id });
@@ -78,7 +79,7 @@ export const PageTabs = () => {
 
       {tabs.map((tab) => (
         <TabsContent key={tab.id} value={tab.id}>
-          {activeTable && <QueryBuilder />}
+          <TabProvider value={{ tab }}>{activeTable && <QueryBuilder />}</TabProvider>
         </TabsContent>
       ))}
     </Tabs>

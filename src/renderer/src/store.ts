@@ -16,9 +16,10 @@ interface TableState {
   addNewTab: () => void;
   removeTab: (id: string) => void;
   rearrangeTabs: (oldIndex: number, newIndex: number) => void;
+  storeTabFormState: (id: string, formState: any) => void;
 }
 
-interface Tab {
+export interface Tab {
   id: string;
   name: string;
   sortIndex: number;
@@ -48,6 +49,16 @@ const useTableStore = create<TableState>()(
         removeTab: (id) =>
           set((state) => {
             const tabs = state.tabs.filter((tab) => tab.id !== id);
+            return { tabs };
+          }),
+        storeTabFormState: (id, formState) =>
+          set((state) => {
+            const tabs = state.tabs.map((tab) => {
+              if (tab.id === id) {
+                return { ...tab, formState };
+              }
+              return tab;
+            });
             return { tabs };
           }),
       }),

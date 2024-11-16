@@ -1,6 +1,6 @@
 import useTableStore from "@renderer/store";
 import QueryOperator from "./QueryOperator";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TableQuery, type TTableQuery } from "@shared/table-query";
@@ -9,17 +9,27 @@ import { ComboBox } from "../ComboBox";
 import { Button } from "../Button";
 import { Input } from "../Input";
 import { Form, FormItem, FormLabel } from "../Form";
+import { useTab } from "@renderer/hooks/TabContext";
 
 export const Query = () => {
-  const { activeTable, activeAWSRegion } = useTableStore();
+  const { tab } = useTab();
+  const { activeTable, activeAWSRegion, storeTabFormState } = useTableStore();
   const [result, setResult] = useState<QueryCommandOutput | null>(null);
 
   const form = useForm<TTableQuery>({
     resolver: zodResolver(TableQuery),
     defaultValues: {
       searchKeyOperator: "=",
+      ...tab.formState,
     },
   });
+
+  useEffect(() => {
+    return () => {
+      const formState = form.getValues();
+      storeTabFormState(tab.id, formState);
+    };
+  }, []);
 
   const { control, register, handleSubmit, setValue } = form;
 
