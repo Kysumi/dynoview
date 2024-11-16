@@ -11,6 +11,7 @@ import {
   SidebarGroupLabel,
   SidebarMenuButton,
 } from "../SideBar";
+import { DatabaseSelector } from "./DatabaseSelector";
 
 const items = [
   {
@@ -33,7 +34,10 @@ const items = [
 export const AppSidebar = () => {
   return (
     <Sidebar>
-      <SidebarHeader>DynoView</SidebarHeader>
+      <SidebarHeader>
+        <div>DynoView</div>
+        <DatabaseSelector />
+      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
