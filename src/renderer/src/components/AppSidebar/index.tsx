@@ -16,18 +16,13 @@ import Versions from "../Versions";
 
 const items = [
   {
-    title: "Dashboard",
-    url: "/dashboard",
+    title: "Query Builder",
+    url: "/query-builder",
     icon: Database,
   },
   {
-    title: "Users",
-    url: "/users",
-    icon: User,
-  },
-  {
-    title: "Settings",
-    url: "/settings",
+    title: "Models",
+    url: "/models",
     icon: Settings,
   },
 ];
