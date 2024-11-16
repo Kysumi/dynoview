@@ -1,7 +1,5 @@
-import { useState } from "react";
 import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import {
-  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
@@ -13,9 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../Tabs";
 import useTableStore from "@renderer/store";
 import { GripVertical, Plus, X } from "lucide-react";
 import { Button } from "../Button";
-import { id } from "@renderer/util/id";
 
-export const PageTab = ({ id, label, onRemove }: { id: string; label: string; onRemove: (id: string) => void }) => {
+export const PageTab = ({ id, name, onRemove }: { id: string; name: string; onRemove: (id: string) => void }) => {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: id });
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -28,7 +25,7 @@ export const PageTab = ({ id, label, onRemove }: { id: string; label: string; on
         <Button variant="ghost" className="cursor-move" {...listeners}>
           <GripVertical />
         </Button>
-        <span className="truncate">{label}</span>
+        <span className="truncate">{name}</span>
 
         <Button variant="ghost" onClick={() => onRemove(id)}>
           <X className="h-4 w-4" />
@@ -39,31 +36,21 @@ export const PageTab = ({ id, label, onRemove }: { id: string; label: string; on
 };
 
 export const PageTabs = () => {
-  const { activeTable } = useTableStore();
-  const [pages, setPages] = useState([{ id: id(), label: "My first tab" }]);
+  const { activeTable, tabs, rearrangeTabs, removeTab, addNewTab } = useTableStore();
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
 
     if (active.id !== over.id) {
-      setPages((items) => {
-        const oldIndex = items.findIndex((tab) => tab.id === active.id);
-        const newIndex = items.findIndex((tab) => tab.id === over.id);
+      const oldIndex = tabs.findIndex((tab) => tab.id === active.id);
+      const newIndex = tabs.findIndex((tab) => tab.id === over.id);
 
-        console.log(oldIndex, newIndex);
-
-        return arrayMove(items, oldIndex, newIndex);
-      });
+      rearrangeTabs(oldIndex, newIndex);
     }
   };
 
   const handleRemove = (id: string) => {
-    const items = [...pages];
-    const index = items.findIndex((tab) => tab.id === id);
-    if (index > -1) {
-      items.splice(index, 1);
-    }
-    setPages(items);
+    removeTab(id);
   };
 
   const sensors = useSensors(
@@ -74,26 +61,22 @@ export const PageTabs = () => {
   );
 
   return (
-    <Tabs defaultValue={pages[0].id}>
+    <Tabs defaultValue={tabs[0]?.id}>
       <TabsList>
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={pages} strategy={verticalListSortingStrategy}>
-            {pages.map((tab) => {
-              return <PageTab key={tab.id} id={tab.id} label={tab.label} onRemove={handleRemove} />;
+          <SortableContext items={tabs} strategy={verticalListSortingStrategy}>
+            {tabs.map((tab) => {
+              return <PageTab key={tab.id} id={tab.id} name={tab.name} onRemove={handleRemove} />;
             })}
           </SortableContext>
 
-          <Button
-            className="h-8 w-8 ml-2"
-            variant="outline"
-            onClick={() => setPages([...pages, { id: id(), label: "New" }])}
-          >
+          <Button className="h-8 w-8 ml-2" variant="outline" onClick={() => addNewTab()}>
             <Plus />
           </Button>
         </DndContext>
       </TabsList>
 
-      {pages.map((tab) => (
+      {tabs.map((tab) => (
         <TabsContent key={tab.id} value={tab.id}>
           {activeTable && <QueryBuilder />}
         </TabsContent>
