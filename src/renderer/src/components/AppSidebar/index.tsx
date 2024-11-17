@@ -1,4 +1,4 @@
-import { Database, Settings, Package } from "lucide-react";
+import { Database, Settings, Package, PlusCircle } from "lucide-react";
 import {
   SidebarContent,
   SidebarGroup,
@@ -14,6 +14,7 @@ import {
 import { DatabaseSelector } from "./DatabaseSelector";
 import Versions from "../Versions";
 import { Link, useLocation } from "react-router-dom";
+import { Integrations } from "./Integrations";
 
 const items = [
   {
@@ -61,6 +62,7 @@ export const AppSidebar = () => {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        <Integrations />
       </SidebarContent>
       <SidebarFooter>
         <Versions />

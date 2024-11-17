@@ -4,6 +4,7 @@ import type {} from "@redux-devtools/extension"; // required for devtools typing
 import type { TableInfo } from "@shared/table-info";
 import { id } from "./util/id";
 import { arrayMove } from "@dnd-kit/sortable";
+import type { SSOIntegration } from "@shared/sso-intefration";
 
 interface TableState {
   setAWSRegion: (region: string) => void;
@@ -17,6 +18,9 @@ interface TableState {
   removeTab: (id: string) => void;
   rearrangeTabs: (oldIndex: number, newIndex: number) => void;
   storeTabFormState: (id: string, formState: any) => void;
+
+  integrations: SSOIntegration[];
+  setIntegrations: (integrations: SSOIntegration[]) => void;
 }
 
 export interface Tab {
@@ -61,6 +65,8 @@ const useTableStore = create<TableState>()(
             });
             return { tabs };
           }),
+        integrations: [],
+        setIntegrations: (integrations) => set(() => ({ integrations })),
       }),
       {
         // persist the state to local storage
