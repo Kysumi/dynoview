@@ -4,7 +4,7 @@ import type {} from "@redux-devtools/extension"; // required for devtools typing
 import type { TableInfo } from "@shared/table-info";
 import { id } from "./util/id";
 import { arrayMove } from "@dnd-kit/sortable";
-import type { SSOIntegration } from "@shared/sso-intefration";
+import type { SSOIntegration } from "@shared/sso-integration";
 
 interface TableState {
   setAWSRegion: (region: string) => void;

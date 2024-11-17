@@ -7,14 +7,15 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "../SideBar";
-import useTableStore, { Integration } from "@renderer/store";
+import useTableStore from "@renderer/store";
 import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "../Dialog";
-import { Form, FormProvider, useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import { Input } from "../Input";
 import { Button } from "../Button";
-import { SSOIntegration, SSOIntegrationSchema } from "@shared/sso-intefration";
+import { SSOIntegration, SSOIntegrationSchema, AWSRegions } from "@shared/sso-integration";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormItem, FormLabel } from "../Form";
+import { ComboBox } from "../ComboBox";
 
 export const Integrations = () => {
   const { integrations } = useTableStore();
@@ -62,7 +63,7 @@ export const AddIntegration = () => {
 const AddIntegrationForm = () => {
   const form = useForm<SSOIntegration>({
     resolver: zodResolver(SSOIntegrationSchema),
-    mode: "onTouched",
+    mode: "onBlur",
     defaultValues: {
       alias: "",
       portalUrl: "",
@@ -79,17 +80,31 @@ const AddIntegrationForm = () => {
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-2">
-          <FormItem>
+          <FormItem className="grid grid-cols-[20%_80%] gap-2 items-center">
             <FormLabel>Alias</FormLabel>
             <Input {...register("alias")} placeholder="Alias" />
           </FormItem>
-          <FormItem>
+          <div className="text-red-500 text-xs col-start-2 pl-[22%]">{form.formState.errors.alias?.message}</div>
+          <FormItem className="grid grid-cols-[20%_80%] gap-2 items-center">
             <FormLabel>Portal URL</FormLabel>
             <Input {...register("portalUrl")} placeholder="Portal URL" />
           </FormItem>
-          <FormItem>
+          <div className="text-red-500 text-xs col-start-2 pl-[22%]">{form.formState.errors.portalUrl?.message}</div>
+          <FormItem className="grid grid-cols-[20%_80%] gap-2 items-center">
             <FormLabel>AWS Region</FormLabel>
-            <Input {...register("awsRegion")} placeholder="AWS Region" />
+            <Controller
+              control={form.control}
+              name="awsRegion"
+              render={({ field }) => (
+                <ComboBox
+                  {...field}
+                  options={AWSRegions.map(({ region }) => ({ value: region, label: region }))}
+                  onChange={(option) => field.onChange(option.value)}
+                  selectedOption={field.value}
+                  placeHolder="Select AWS Region"
+                />
+              )}
+            />
           </FormItem>
           <Button type="submit">Add</Button>
         </div>
