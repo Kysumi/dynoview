@@ -1,4 +1,4 @@
-import { Database, PlusCircle } from "lucide-react";
+import { Database, Delete, Edit, MoreHorizontal, MoreVertical, PlusCircle, Trash } from "lucide-react";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -12,10 +12,45 @@ import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "../Dialog";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { Input } from "../Input";
 import { Button } from "../Button";
-import { SSOIntegration, SSOIntegrationSchema, AWSRegions } from "@shared/sso-integration";
+import { type SSOIntegration, SSOIntegrationSchema, AWSRegions } from "@shared/sso-integration";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormItem, FormLabel } from "../Form";
 import { ComboBox } from "../ComboBox";
+import { useState } from "react";
+import { DialogTitle } from "@radix-ui/react-dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "../PopOver";
+
+export const IntegrationItem = ({ integration }: { integration: SSOIntegration }) => {
+  const { setIntegrations, integrations } = useTableStore();
+
+  const handleDelete = () => {
+    setIntegrations(integrations.filter((i) => i.alias !== integration.alias));
+  };
+
+  return (
+    <div className="flex flex-row justify-between w-full">
+      <div className="flex flex-row items-center gap-2">
+        <Database />
+        {integration.alias}
+      </div>
+      <Popover>
+        <PopoverTrigger>
+          <MoreVertical className="cursor-pointer text-xs h-4" />
+        </PopoverTrigger>
+        <PopoverContent className="w-fit p-0 flex flex-col gap-1">
+          <Button variant="ghost" className="w-full">
+            <Edit />
+            Edit
+          </Button>
+          <Button variant="ghost" className="w-full" onClick={handleDelete}>
+            <Trash />
+            Delete
+          </Button>
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+};
 
 export const Integrations = () => {
   const { integrations } = useTableStore();
@@ -28,8 +63,7 @@ export const Integrations = () => {
             return (
               <SidebarMenuItem key={integration.alias}>
                 <SidebarMenuButton>
-                  <Database />
-                  <div>{integration.alias}</div>
+                  <IntegrationItem integration={integration} />
                 </SidebarMenuButton>
               </SidebarMenuItem>
             );
@@ -46,35 +80,48 @@ export const Integrations = () => {
 };
 
 export const AddIntegration = () => {
+  const [isOpen, setIsOpen] = useState(false);
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger className="flex items-center gap-2">
         <PlusCircle />
         <span>Add integration</span>
       </DialogTrigger>
       <DialogContent>
+        <DialogTitle className="sr-only">Add integration</DialogTitle>
         <DialogHeader>Add integration</DialogHeader>
-        <AddIntegrationForm />
+        <AddIntegrationForm close={() => setIsOpen(false)} />
       </DialogContent>
     </Dialog>
   );
 };
 
-const AddIntegrationForm = () => {
+const AddIntegrationForm = ({ close }: { close: () => void }) => {
+  const { setIntegrations, integrations } = useTableStore();
   const form = useForm<SSOIntegration>({
     resolver: zodResolver(SSOIntegrationSchema),
-    mode: "onBlur",
+    mode: "onTouched",
     defaultValues: {
       alias: "",
       portalUrl: "",
       awsRegion: "ap-southeast-2",
+      integrationType: "AWS",
+      method: "browser",
     },
   });
   const { register } = form;
 
   const onSubmit = (data: SSOIntegration) => {
-    console.log(data);
+    //for now store with zustand
+    if (integrations.find((integration) => integration.alias === data.alias)) {
+      form.setError("alias", { message: "Alias already exists" });
+      return;
+    }
+    setIntegrations([...integrations, data]);
+    close();
   };
+
+  console.log(form.formState.errors);
 
   return (
     <FormProvider {...form}>
@@ -84,12 +131,12 @@ const AddIntegrationForm = () => {
             <FormLabel>Alias</FormLabel>
             <Input {...register("alias")} placeholder="Alias" />
           </FormItem>
-          <div className="text-red-500 text-xs col-start-2 pl-[22%]">{form.formState.errors.alias?.message}</div>
+          <div className="text-red-500 text-xs">{form.formState.errors.alias?.message}</div>
           <FormItem>
             <FormLabel>Portal URL</FormLabel>
             <Input {...register("portalUrl")} placeholder="Portal URL" />
           </FormItem>
-          <div className="text-red-500 text-xs col-start-2 pl-[22%]">{form.formState.errors.portalUrl?.message}</div>
+          <div className="text-red-500 text-xs">{form.formState.errors.portalUrl?.message}</div>
           <FormItem className="min-w-40 flex flex-col gap-1.5">
             <FormLabel>AWS Region</FormLabel>
             <Controller
