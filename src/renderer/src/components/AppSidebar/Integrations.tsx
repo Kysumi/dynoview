@@ -80,24 +80,23 @@ const AddIntegrationForm = () => {
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex flex-col gap-2">
-          <FormItem className="grid grid-cols-[20%_80%] gap-2 items-center">
+          <FormItem>
             <FormLabel>Alias</FormLabel>
             <Input {...register("alias")} placeholder="Alias" />
           </FormItem>
           <div className="text-red-500 text-xs col-start-2 pl-[22%]">{form.formState.errors.alias?.message}</div>
-          <FormItem className="grid grid-cols-[20%_80%] gap-2 items-center">
+          <FormItem>
             <FormLabel>Portal URL</FormLabel>
             <Input {...register("portalUrl")} placeholder="Portal URL" />
           </FormItem>
           <div className="text-red-500 text-xs col-start-2 pl-[22%]">{form.formState.errors.portalUrl?.message}</div>
-          <FormItem className="grid grid-cols-[20%_80%] gap-2 items-center">
+          <FormItem className="min-w-40 flex flex-col gap-1.5">
             <FormLabel>AWS Region</FormLabel>
             <Controller
               control={form.control}
               name="awsRegion"
               render={({ field }) => (
                 <ComboBox
-                  {...field}
                   options={AWSRegions.map(({ region }) => ({ value: region, label: region }))}
                   onChange={(option) => field.onChange(option.value)}
                   selectedOption={field.value}
