@@ -1,11 +1,48 @@
-import { app, shell, BrowserWindow, ipcMain } from "electron";
-import { join } from "node:path";
+import { app, shell, BrowserWindow, ipcMain, dialog } from "electron";
+import path, { join } from "node:path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
+const PROTOCOL_SCHEME = "dyno-view";
+
+let mainWindow: BrowserWindow;
+
+if (process.defaultApp) {
+  if (process.argv.length >= 2) {
+    app.setAsDefaultProtocolClient(PROTOCOL_SCHEME, process.execPath, [path.resolve(process.argv[1])]);
+  }
+} else {
+  app.setAsDefaultProtocolClient(PROTOCOL_SCHEME);
+}
+
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on("second-instance", (event, commandLine, workingDirectory) => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
+    }
+
+    //Alert for now but will need to handle events later on, e.g sso-callback
+    dialog.showErrorBox("Welcome Back", `You arrived from: ${commandLine?.pop()?.slice(0, -1)}`);
+  });
+
+  // Create mainWindow, load the rest of the app, etc...
+  app.whenReady().then(() => {
+    createWindow();
+  });
+
+  app.on("open-url", (event, url) => {
+    console.log(`open-url: ${url}`);
+  });
+}
 
 function createWindow(): void {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
     show: false,
