@@ -49,7 +49,7 @@ export const AppSidebar = () => {
               {items.map((item) => {
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton isActive={item.url === location.pathname} asChild>
+                    <SidebarMenuButton variant={"default"} isActive={item.url === location.pathname} asChild>
                       <Link to={item.url}>
                         <item.icon />
                         <span>{item.title}</span>
