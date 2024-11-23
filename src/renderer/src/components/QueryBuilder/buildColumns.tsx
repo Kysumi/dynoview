@@ -54,7 +54,7 @@ export const buildColumns = (data: unknown, options: BuildColumnsOptions = {}): 
   const sortedColumns = Array.from(columns)
     .filter(Boolean)
     .map(
-      (key): ColumnDef<TableDataType> => ({
+      (key): Column => ({
         accessorKey: key,
         header: key,
         cell: (attr) => <DataCell {...attr} />,
