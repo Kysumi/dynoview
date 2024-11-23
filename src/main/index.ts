@@ -55,7 +55,7 @@ const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
   app.quit();
 } else {
-  app.on("second-instance", (event, commandLine, workingDirectory) => {
+  app.on("second-instance", (_, commandLine, __) => {
     // Someone tried to run a second instance, we should focus our window.
     if (mainWindow) {
       if (mainWindow.isMinimized()) mainWindow.restore();
@@ -92,7 +92,7 @@ if (!gotTheLock) {
     });
   });
 
-  app.on("open-url", (event, url) => {
+  app.on("open-url", (_, url) => {
     console.log(`open-url: ${url}`);
   });
 }

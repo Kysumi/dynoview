@@ -26,6 +26,7 @@ export const Query = () => {
     },
   });
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: This effect should only run once
   useEffect(() => {
     return () => {
       const formState = form.getValues();

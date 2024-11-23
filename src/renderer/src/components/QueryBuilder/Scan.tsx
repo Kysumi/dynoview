@@ -1,9 +1,10 @@
 import useTableStore from "@renderer/store";
 import { useState } from "react";
 import { Button } from "../Button";
+import type { ScanCommandOutput } from "@aws-sdk/lib-dynamodb";
 
 export const Scan = () => {
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<ScanCommandOutput | null>(null);
   const { activeAWSRegion, activeTable } = useTableStore();
 
   if (!activeTable) return null;

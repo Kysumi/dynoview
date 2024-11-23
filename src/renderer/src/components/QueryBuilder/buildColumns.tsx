@@ -11,10 +11,10 @@ type BuildColumnsOptions = {
   maxDepth?: number; // undefined means no limit
 };
 
-export const buildColumns = (data: unknown, options: BuildColumnsOptions = {}): ColumnDef<{}>[] => {
+export const buildColumns = (data: unknown, options: BuildColumnsOptions = {}): ColumnDef<TableDataType>[] => {
   const columns = new Set<string>();
 
-  const flattenObject = (obj: Record<string, any>, prefix = "", currentDepth = 0): void => {
+  const flattenObject = (obj: Record<string, unknown>, prefix = "", currentDepth = 0): void => {
     // Check if we've reached the maximum depth
     if (typeof options.maxDepth === "number" && currentDepth >= options.maxDepth) {
       // Add the current prefix as a column and stop recursion
@@ -27,7 +27,7 @@ export const buildColumns = (data: unknown, options: BuildColumnsOptions = {}): 
     for (const [key, value] of Object.entries(obj)) {
       if (value !== null && typeof value === "object" && !Array.isArray(value)) {
         // Recursive call for nested objects
-        flattenObject(value, `${prefix}${key}.`, currentDepth + 1);
+        flattenObject(value as Record<string, unknown>, `${prefix}${key}.`, currentDepth + 1);
       } else {
         // For arrays and primitive values
         const finalKey = prefix + key;
@@ -42,12 +42,12 @@ export const buildColumns = (data: unknown, options: BuildColumnsOptions = {}): 
     // Take the first item as a sample for column structure
     const sampleItem = items[0];
     if (typeof sampleItem === "object" && sampleItem !== null) {
-      flattenObject(sampleItem);
+      flattenObject(sampleItem as Record<string, unknown>);
     }
   };
 
   if (typeof data === "object" && data !== null) {
-    const items = (data as any).Items;
+    const items = (data as Record<string, unknown[]>).Items;
     processItems(items);
   }
 

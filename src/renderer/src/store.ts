@@ -16,14 +16,14 @@ interface TableState {
   addNewTab: () => void;
   removeTab: (id: string) => void;
   rearrangeTabs: (oldIndex: number, newIndex: number) => void;
-  storeTabFormState: (id: string, formState: any) => void;
+  storeTabFormState: (id: string, formState: Record<string, unknown>) => void;
 }
 
 export interface Tab {
   id: string;
   name: string;
   sortIndex: number;
-  formState: any;
+  formState: Record<string, unknown>;
 }
 
 const useTableStore = create<TableState>()(
