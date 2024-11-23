@@ -22,15 +22,17 @@ export const PageTab = ({ id, name, onRemove }: { id: string; name: string; onRe
 
   return (
     <div ref={setNodeRef} style={style} {...attributes}>
-      <TabsTrigger className="flex items-center gap-2 h-8" key={id} value={id}>
-        <Button variant="ghost" className="cursor-move" {...listeners}>
-          <GripVertical />
-        </Button>
-        <span className="truncate">{name}</span>
+      <TabsTrigger className="flex items-center gap-2 h-8" key={id} value={id} asChild>
+        <div>
+          <Button variant="ghost" className="cursor-move" {...listeners}>
+            <GripVertical />
+          </Button>
+          <span className="truncate">{name}</span>
 
-        <Button variant="ghost" onClick={() => onRemove(id)}>
-          <X className="h-4 w-4" />
-        </Button>
+          <Button variant={"ghost"} onClick={() => onRemove(id)}>
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
       </TabsTrigger>
     </div>
   );
