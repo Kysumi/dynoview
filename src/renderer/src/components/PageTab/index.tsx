@@ -20,12 +20,52 @@ import useTableStore from "@renderer/store";
 import { GripVertical, Plus, X } from "lucide-react";
 import { Button } from "../Button";
 import { TabProvider } from "@renderer/hooks/TabContext";
+import { useEffect, useRef, useState } from "react";
+import { Input } from "../Input";
 
 export const PageTab = ({ id, name, onRemove }: { id: string; name: string; onRemove: (id: string) => void }) => {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: id });
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+  };
+
+  const { updateTab } = useTableStore();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedName, setEditedName] = useState(name);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isEditing) {
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    }
+  }, [isEditing]);
+
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsEditing(true);
+  };
+
+  const handleBlur = () => {
+    setIsEditing(false);
+    if (editedName.trim() !== name) {
+      updateTab(id, {
+        name: editedName,
+      });
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleBlur();
+    }
+    if (e.key === "Escape") {
+      setEditedName(name);
+      setIsEditing(false);
+    }
   };
 
   return (
@@ -35,7 +75,23 @@ export const PageTab = ({ id, name, onRemove }: { id: string; name: string; onRe
           <Button variant="ghost" className="cursor-move" {...listeners}>
             <GripVertical />
           </Button>
-          <span className="truncate">{name}</span>
+
+          {isEditing ? (
+            <Input
+              ref={inputRef}
+              value={editedName}
+              onChange={(e) => setEditedName(e.target.value)}
+              onBlur={handleBlur}
+              onKeyDown={handleKeyDown}
+              onClick={(e) => e.stopPropagation()}
+              // Prevent drag when editing
+              onMouseDown={(e) => e.stopPropagation()}
+            />
+          ) : (
+            <span className="truncate" onDoubleClick={handleDoubleClick}>
+              {name}
+            </span>
+          )}
 
           <Button variant={"ghost"} onClick={() => onRemove(id)}>
             <X className="h-4 w-4" />
@@ -48,6 +104,7 @@ export const PageTab = ({ id, name, onRemove }: { id: string; name: string; onRe
 
 export const PageTabs = () => {
   const { activeTable, tabs, rearrangeTabs, removeTab, addNewTab } = useTableStore();
+  const [activeTab, setActiveTab] = useState<string>(tabs[0]?.id);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -62,6 +119,15 @@ export const PageTabs = () => {
 
   const handleRemove = (id: string) => {
     removeTab(id);
+
+    if (id === activeTab) {
+      // Need to think of a cleaner way to handle this
+      setActiveTab(tabs[tabs.length - 2]?.id);
+    }
+  };
+
+  const handleNewTab = () => {
+    addNewTab();
   };
 
   const sensors = useSensors(
@@ -72,7 +138,7 @@ export const PageTabs = () => {
   );
 
   return (
-    <Tabs defaultValue={tabs[0]?.id}>
+    <Tabs value={activeTab} onValueChange={(id) => setActiveTab(id)}>
       <TabsList>
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={tabs} strategy={verticalListSortingStrategy}>
@@ -81,7 +147,7 @@ export const PageTabs = () => {
             })}
           </SortableContext>
 
-          <Button className="h-8 w-8 ml-2" variant="outline" onClick={() => addNewTab()}>
+          <Button className="h-8 w-8 ml-2" variant="outline" onClick={handleNewTab}>
             <Plus />
           </Button>
         </DndContext>
