@@ -1,4 +1,12 @@
-import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import {
   SortableContext,
   sortableKeyboardCoordinates,
@@ -41,12 +49,12 @@ export const PageTab = ({ id, name, onRemove }: { id: string; name: string; onRe
 export const PageTabs = () => {
   const { activeTable, tabs, rearrangeTabs, removeTab, addNewTab } = useTableStore();
 
-  const handleDragEnd = (event) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
-    if (active.id !== over.id) {
+    if (active.id !== over?.id) {
       const oldIndex = tabs.findIndex((tab) => tab.id === active.id);
-      const newIndex = tabs.findIndex((tab) => tab.id === over.id);
+      const newIndex = tabs.findIndex((tab) => tab.id === over?.id);
 
       rearrangeTabs(oldIndex, newIndex);
     }
