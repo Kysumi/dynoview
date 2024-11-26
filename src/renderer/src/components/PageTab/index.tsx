@@ -84,8 +84,6 @@ export const PageTab = ({ id, name, onRemove }: { id: string; name: string; onRe
               onBlur={handleBlur}
               onKeyDown={handleKeyDown}
               onClick={(e) => e.stopPropagation()}
-              // Prevent drag when editing
-              onMouseDown={(e) => e.stopPropagation()}
             />
           ) : (
             <span className="truncate" onDoubleClick={handleDoubleClick}>
