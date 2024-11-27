@@ -1,8 +1,8 @@
 "use client";
 
 import { flexRender, getCoreRowModel, useReactTable, type ColumnDef } from "@tanstack/react-table";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../Table/Table";
-import { NoResults } from "../Table/NoResults";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@components/Table/Table";
+import { NoResults } from "@components/Table/NoResults";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

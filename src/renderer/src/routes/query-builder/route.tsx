@@ -13,15 +13,15 @@ import {
   useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { QueryBuilder } from "../QueryBuilder/QueryBuilder";
+import { QueryBuilder } from "./QueryBuilder";
 import { CSS } from "@dnd-kit/utilities";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../Tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/Tabs";
 import useTableStore from "@renderer/store";
 import { GripVertical, Plus, X } from "lucide-react";
-import { Button } from "../Button";
+import { Button } from "@components/Button";
 import { TabProvider } from "@renderer/hooks/TabContext";
 import { useEffect, useRef, useState } from "react";
-import { Input } from "../Input";
+import { Input } from "@components/Input";
 
 export const PageTab = ({ id, name, onRemove }: { id: string; name: string; onRemove: (id: string) => void }) => {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: id });
@@ -100,7 +100,7 @@ export const PageTab = ({ id, name, onRemove }: { id: string; name: string; onRe
   );
 };
 
-export const PageTabs = () => {
+export const QueryBuilderRoute = () => {
   const { activeTable, tabs, rearrangeTabs, removeTab, addNewTab } = useTableStore();
   const [activeTab, setActiveTab] = useState<string>(tabs[0]?.id);
 

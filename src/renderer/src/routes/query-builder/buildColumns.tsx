@@ -1,6 +1,6 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import { DataCell } from "../Table/DataCell";
-import type { TableDataType } from "../Table/TableDataType";
+import { DataCell } from "@components/Table/DataCell";
+import type { TableDataType } from "@components/Table/TableDataType";
 
 type Column = {
   accessorKey: string;

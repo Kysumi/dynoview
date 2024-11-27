@@ -1,4 +1,4 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../Tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/Tabs";
 import { Query } from "./Query";
 import { Scan } from "./Scan";
 

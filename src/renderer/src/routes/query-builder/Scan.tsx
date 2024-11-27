@@ -1,6 +1,6 @@
 import useTableStore from "@renderer/store";
 import { useState } from "react";
-import { Button } from "../Button";
+import { Button } from "@components/Button";
 import type { ScanCommandOutput } from "@aws-sdk/lib-dynamodb";
 
 export const Scan = () => {
