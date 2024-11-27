@@ -1,16 +1,12 @@
-import { ListTablesCommand, DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
+import { ListTablesCommand } from "@aws-sdk/client-dynamodb";
+import { getTableClient } from "../table";
 
 interface ListAvailableTablesArgs {
   region: string;
 }
 
 export const listAvailableTables = async ({ region }: ListAvailableTablesArgs): Promise<string[]> => {
-  const client = DynamoDBDocument.from(
-    new DynamoDBClient({
-      region,
-    }),
-  );
+  const client = await getTableClient(region);
 
   try {
     const tables = await client.send(new ListTablesCommand({}));

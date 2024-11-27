@@ -15,7 +15,7 @@ export const scanTable = async (params: ScanTableParams) => {
     Limit: limit,
   });
 
-  const dbClient = getTableClient(region);
+  const dbClient = await getTableClient(region);
 
   const response = await dbClient.send(command);
 
