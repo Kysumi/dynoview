@@ -1,3 +1,7 @@
+// https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/account/client/list_regions.html
+//
+//
+// User to machine CREDS
 export const regions = [
   "ca-west-1",
   "il-central-1",

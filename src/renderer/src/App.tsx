@@ -1,6 +1,7 @@
-import { PageTabs } from "./components/PageTab";
 import { createHashRouter, RouterProvider } from "react-router-dom";
 import { Layout } from "./routes/_layout";
+import { SettingsRoute } from "./routes/settings/route";
+import { QueryBuilderRoute } from "./routes/query-builder/route";
 
 const router = createHashRouter([
   {
@@ -13,7 +14,7 @@ const router = createHashRouter([
       },
       {
         path: "/query-builder",
-        element: <PageTabs />,
+        element: <QueryBuilderRoute />,
       },
       {
         path: "/models",
@@ -21,7 +22,7 @@ const router = createHashRouter([
       },
       {
         path: "/settings",
-        element: <div>Settings</div>,
+        element: <SettingsRoute />,
       },
     ],
   },

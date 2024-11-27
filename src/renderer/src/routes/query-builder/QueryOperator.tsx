@@ -1,4 +1,4 @@
-import { SelectItem, Select, SelectTrigger, SelectValue, SelectContent } from "../Select";
+import { SelectItem, Select, SelectTrigger, SelectValue, SelectContent } from "@components/Select";
 
 const operators = [
   { key: "=", label: "Equal to" },
