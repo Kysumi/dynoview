@@ -17,6 +17,7 @@ interface TableState {
   removeTab: (id: string) => void;
   rearrangeTabs: (oldIndex: number, newIndex: number) => void;
   storeTabFormState: (id: string, formState: Record<string, unknown>) => void;
+  updateTab: (id: string, updates: Partial<Omit<Tab, "id">>) => void;
 }
 
 export interface Tab {
@@ -51,6 +52,10 @@ const useTableStore = create<TableState>()(
             const tabs = state.tabs.filter((tab) => tab.id !== id);
             return { tabs };
           }),
+        updateTab: (id, updates) =>
+          set((state) => ({
+            tabs: state.tabs.map((tab) => (tab.id === id ? { ...tab, ...updates } : tab)),
+          })),
         storeTabFormState: (id, formState) =>
           set((state) => {
             const tabs = state.tabs.map((tab) => {
