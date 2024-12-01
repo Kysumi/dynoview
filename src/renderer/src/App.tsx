@@ -2,6 +2,7 @@ import { createHashRouter, RouterProvider } from "react-router-dom";
 import { Layout } from "./routes/_layout";
 import { SettingsRoute } from "./routes/settings/route";
 import { QueryBuilderRoute } from "./routes/query-builder/route";
+import { HomeRoute } from "./routes/home/routes";
 
 const router = createHashRouter([
   {
@@ -10,7 +11,7 @@ const router = createHashRouter([
     children: [
       {
         path: "",
-        element: <div>Hello world!</div>,
+        element: <HomeRoute />,
       },
       {
         path: "/query-builder",

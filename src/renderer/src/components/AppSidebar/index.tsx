@@ -1,4 +1,4 @@
-import { Database, Settings, Package } from "lucide-react";
+import { Database, Settings, Package, Home } from "lucide-react";
 import {
   SidebarContent,
   SidebarGroup,
@@ -16,6 +16,11 @@ import Versions from "../Versions";
 import { Link, useLocation } from "react-router-dom";
 
 const items = [
+  {
+    title: "Home",
+    url: "/",
+    icon: Home,
+  },
   {
     title: "Query Builder",
     url: "/query-builder",
