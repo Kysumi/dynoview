@@ -4,9 +4,16 @@ import {
   StartDeviceAuthorizationCommand,
   CreateTokenCommand,
   RegisterClientCommand,
+  AuthorizationPendingException,
 } from "@aws-sdk/client-sso-oidc";
 import { BrowserWindow } from "electron";
 import { SecureLocalStore } from "../secure-local-store";
+
+interface Registration {
+  clientId: string;
+  clientSecret: string;
+  expiresAt: number;
+}
 
 export class AWSSSOHandler {
   private ssoOidcClient: SSOOIDCClient;
@@ -19,8 +26,8 @@ export class AWSSSOHandler {
     this.store = new SecureLocalStore("sso-client-registration");
   }
 
-  private async registerClient() {
-    const stored = this.store.get("clientRegistration");
+  private async registerClient(): Promise<Registration> {
+    const stored = this.store.get("clientRegistration") as Registration | undefined;
 
     if (stored && stored.expiresAt > Date.now()) {
       return stored;
@@ -106,7 +113,7 @@ export class AWSSSOHandler {
           expiresIn: tokenResponse.expiresIn,
         };
       } catch (error) {
-        if (error.name === "AuthorizationPendingException") {
+        if (error instanceof AuthorizationPendingException) {
           await new Promise((resolve) => setTimeout(resolve, interval * 1000));
           attempts++;
           continue;
