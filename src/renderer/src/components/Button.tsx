@@ -54,4 +54,6 @@ const BackButton = React.forwardRef<HTMLButtonElement, { to: string; text: strin
   </Link>
 ));
 
+BackButton.displayName = "BackButton";
+
 export { Button, BackButton, buttonVariants };
