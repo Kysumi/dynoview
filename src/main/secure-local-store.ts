@@ -9,7 +9,7 @@ export class SecureLocalStore {
     this.path = path.join(app.getPath("userData"), `${filename}.encrypted`);
   }
 
-  get(key: string): any {
+  get(key: string): Record<string, unknown> | undefined {
     try {
       // Read encrypted data from file
       const encryptedData = fs.readFileSync(this.path);
@@ -25,7 +25,7 @@ export class SecureLocalStore {
     }
   }
 
-  set(key: string, value: any): void {
+  set(key: string, value: Record<string, unknown>): void {
     let data = {};
     try {
       // Try to read and decrypt existing data
