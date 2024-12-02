@@ -86,7 +86,7 @@ export const PageTab = ({ id, name, onRemove }: { id: string; name: string; onRe
               onClick={(e) => e.stopPropagation()}
             />
           ) : (
-            <span className="truncate" onDoubleClick={handleDoubleClick}>
+            <span title="Double click to edit" className="truncate select-none" onDoubleClick={handleDoubleClick}>
               {name}
             </span>
           )}
