@@ -11,7 +11,6 @@ import {
   SidebarGroupLabel,
   SidebarMenuButton,
 } from "../SideBar";
-import { DatabaseSelector } from "./DatabaseSelector";
 import Versions from "../Versions";
 import { Link, useLocation } from "react-router-dom";
 
@@ -42,10 +41,7 @@ export const AppSidebar = () => {
   const location = useLocation();
   return (
     <Sidebar>
-      <SidebarHeader>
-        <div>DynoView</div>
-        <DatabaseSelector />
-      </SidebarHeader>
+      <SidebarHeader>DynoView</SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
