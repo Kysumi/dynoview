@@ -1,9 +1,4 @@
-import {
-  SSOClient,
-  GetRoleCredentialsCommand,
-  ListAccountsCommand,
-  ListAccountRolesCommand,
-} from "@aws-sdk/client-sso";
+import { SSOClient, ListAccountsCommand, ListAccountRolesCommand } from "@aws-sdk/client-sso";
 import {
   SSOOIDCClient,
   StartDeviceAuthorizationCommand,
@@ -39,9 +34,9 @@ export class AWSSSOHandler {
     );
 
     const registration = {
-      clientId: response.clientId!,
-      clientSecret: response.clientSecret!,
-      expiresAt: Date.now() + response.clientSecretExpiresAt! * 1000,
+      clientId: response.clientId ?? "",
+      clientSecret: response.clientSecret ?? "",
+      expiresAt: Date.now() + (response.clientSecretExpiresAt ?? 0) * 1000,
     };
 
     this.store.set("clientRegistration", registration);
@@ -60,7 +55,6 @@ export class AWSSSOHandler {
         }),
       );
 
-      // Create browser window after app is ready
       const authWindow = new BrowserWindow({
         width: 1200,
         height: 800,
@@ -72,16 +66,20 @@ export class AWSSSOHandler {
         },
       });
 
-      // Load the verification URL
       console.log("Loading URL:", deviceAuthResponse.verificationUriComplete);
-      await authWindow.loadURL(deviceAuthResponse.verificationUriComplete!);
+      if (deviceAuthResponse.verificationUriComplete) {
+        await authWindow.loadURL(deviceAuthResponse.verificationUriComplete);
+      } else {
+        throw new Error("Verification URI is missing.");
+      }
 
-      // Poll for token
-      const token = await this.pollForToken(deviceAuthResponse.deviceCode!, client, deviceAuthResponse.interval || 5);
-
-      // Close window after successful authentication
+      if (deviceAuthResponse.deviceCode) {
+        const token = await this.pollForToken(deviceAuthResponse.deviceCode, client, deviceAuthResponse.interval || 5);
+        authWindow.close();
+        return token;
+      }
       authWindow.close();
-      return token;
+      throw new Error("Device code is missing.");
     } catch (error) {
       console.error("SSO authentication failed:", error);
       throw error;
