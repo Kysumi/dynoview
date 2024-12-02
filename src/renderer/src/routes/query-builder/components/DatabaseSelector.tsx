@@ -1,11 +1,11 @@
 import { ChevronsUpDown, DatabaseIcon } from "lucide-react";
-import { Button } from "../Button";
-import { Popover, PopoverContent, PopoverTrigger } from "../PopOver";
 import { useEffect, useState } from "react";
 import useTableStore from "@renderer/store";
-import { ComboBox } from "../ComboBox";
 import { regions } from "@shared/available-regions";
-import { Label } from "../Label";
+import { Popover, PopoverContent, PopoverTrigger } from "@renderer/components/PopOver";
+import { Label } from "@radix-ui/react-select";
+import { Button } from "@renderer/components/Button";
+import { ComboBox } from "@renderer/components/ComboBox";
 
 export const DatabaseSelector = () => {
   const [tables, setTables] = useState<string[]>([]);
