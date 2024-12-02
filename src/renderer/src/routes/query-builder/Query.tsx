@@ -12,6 +12,23 @@ import { Form, FormItem, FormLabel } from "@components/Form";
 import { useTab } from "@renderer/hooks/TabContext";
 import { ResultsTable } from "./ResultsTable";
 import { buildColumns } from "./buildColumns";
+import { AccountRoleSelector } from "@renderer/components/AccountRoleSelector";
+import { useAWSStore } from "@renderer/store/aws-store";
+
+const SharedStuff = () => {
+  const { awsConfig } = useAWSStore();
+
+  const first = awsConfig[0];
+
+  return (
+    <AccountRoleSelector
+      accounts={first.accounts}
+      onSelect={(account) => {
+        console.log(account);
+      }}
+    />
+  );
+};
 
 export const Query = () => {
   const { tab } = useTab();
@@ -21,7 +38,7 @@ export const Query = () => {
   const form = useForm<TTableQuery>({
     resolver: zodResolver(TableQuery),
     defaultValues: {
-      searchKeyOperator: "=",
+      searchKeyOperator: "begins_with",
       ...tab.formState,
     },
   });
@@ -59,6 +76,8 @@ export const Query = () => {
         <input type="hidden" {...register("tableName")} value={activeTable.tableName} />
         <input type="hidden" {...register("region")} value={activeAWSRegion} />
         <input type="hidden" {...register("limit", { valueAsNumber: true })} value={50} />
+
+        <SharedStuff />
 
         {/* Index */}
         <Controller
