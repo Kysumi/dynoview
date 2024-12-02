@@ -41,7 +41,7 @@ export const AppSidebar = () => {
   const location = useLocation();
   return (
     <Sidebar>
-      <SidebarHeader>DynoView</SidebarHeader>
+      <SidebarHeader className="font-semibold">DynoView</SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
