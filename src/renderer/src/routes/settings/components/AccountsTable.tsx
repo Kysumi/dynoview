@@ -33,8 +33,8 @@ export const AccountsTable = ({ accounts }: { accounts: AWSAccount[] }) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {accountRolePairs.map((pair, index) => (
-              <TableRow key={`${pair.accountId}-${pair.roleName}-${index}`}>
+            {accountRolePairs.map((pair) => (
+              <TableRow key={`${pair.accountId}-${pair.roleName}`}>
                 <TableCell>{pair.accountName || "-"}</TableCell>
                 <TableCell>{pair.accountId}</TableCell>
                 <TableCell>{pair.accountEmail || "-"}</TableCell>
