@@ -1,134 +1,89 @@
-import { Button } from "@components/Button";
-import { Input } from "@components/Input";
-import { Form, FormField, FormItem, FormLabel } from "@components/Form";
-import { useForm } from "react-hook-form";
-import { useState } from "react";
-import { FormMessage } from "@components/Form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ComboBox } from "@components/ComboBox";
-import { regions } from "@shared/available-regions";
+import { Separator } from "@renderer/components/Separator";
 import { useAWSStore } from "@renderer/store/aws-store";
-
-const ssoSchema = z.object({
-  startUrl: z.string().url("Please enter a valid URL"),
-  region: z.string(),
-});
-
-type SSOFormValues = z.infer<typeof ssoSchema>;
+import { AccountsTable } from "./components/AccountsTable";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@renderer/components/Card";
+import { Button } from "@renderer/components/Button";
+import { TableHeader, TableRow, TableHead, TableBody, TableCell } from "@renderer/components/Table/Table";
+import { PlusCircle, Table, Settings, Trash2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export const SettingsRoute = () => {
-  const { startUrl, region, setIsAuthenticated, setStartUrl, isAuthenticated } = useAWSStore();
-  const [isLoading, setIsLoading] = useState(false);
-
-  const form = useForm<SSOFormValues>({
-    resolver: zodResolver(ssoSchema),
-    defaultValues: {
-      startUrl,
-      region: region ?? "ap-southeast-2",
-    },
-  });
-
-  const onSubmit = async (values: SSOFormValues) => {
-    setIsLoading(true);
-    setStartUrl(values.startUrl, values.region);
-
-    try {
-      // Initialize SSO
-      await window.electron.ipcRenderer.invoke("aws:init-sso", {
-        startUrl: values.startUrl,
-        region: values.region,
-      });
-
-      // Start SSO flow and get token
-      const { accessToken, expiresIn } = await window.electron.ipcRenderer.invoke("aws:start-sso");
-
-      // Get available accounts
-      const accounts = await window.electron.ipcRenderer.invoke("aws:list-accounts", accessToken);
-      console.log(accounts);
-
-      if (accounts.length > 0) {
-        // Get roles for first account
-        const roles = await window.electron.ipcRenderer.invoke("aws:list-roles", {
-          accessToken,
-          accountId: accounts[0].accountId,
-        });
-
-        console.log(roles);
-
-        if (roles.length > 0) {
-          // Get credentials for first role
-          const credentials = await window.electron.ipcRenderer.invoke("aws:get-credentials", {
-            accessToken,
-            accountId: accounts[0].accountId,
-            roleName: roles[0].roleName,
-          });
-
-          console.log(credentials);
-
-          // Store credentials securely
-          // Update authentication state
-          setIsAuthenticated(true);
-        }
-      }
-    } catch (error) {
-      console.error("Failed to setup SSO:", error);
-      // Handle error appropriately
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { awsConfig } = useAWSStore();
 
   return (
-    <div className="max-w-md mx-auto mt-10">
-      <div className="flex flex-col items-center justify-center gap-4 p-4">
-        <h2 className="text-xl font-semibold">Is AUTHED: {isAuthenticated ? "YES" : "NO"}</h2>
-      </div>
+    <div>
+      <Card className="w-full max-w-4xl mx-auto">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="text-2xl">AWS SSO Integrations</CardTitle>
+            <CardDescription>Manage your AWS Single Sign-On configurations</CardDescription>
+          </div>
+          {awsConfig.length > 0 && (
+            <Button asChild>
+              <Link to="./add-sso-config">
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add New SSO Config
+              </Link>
+            </Button>
+          )}
+        </CardHeader>
 
-      <div className="flex flex-col items-center justify-center gap-4 p-4">
-        <h2 className="text-xl font-semibold">AWS SSO Setup</h2>
-        <p className="text-muted-foreground text-center">Enter your AWS SSO portal URL to begin.</p>
-      </div>
+        <CardContent>
+          {awsConfig.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Account ID</TableHead>
+                  <TableHead>Region</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {awsConfig.map((integration) => (
+                  <TableRow key={integration.id}>
+                    <TableCell className="font-medium">{integration.startUrl}</TableCell>
+                    {/* <TableCell>{integration.accountId}</TableCell> */}
+                    <TableCell>{integration.region}</TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="icon" asChild>
+                        <Link to={`/edit-sso-config/${integration.id}`}>
+                          <Settings className="h-4 w-4" />
+                          <span className="sr-only">Edit</span>
+                        </Link>
+                      </Button>
+                      <Button variant="ghost" size="icon" className="text-destructive">
+                        <Trash2 className="h-4 w-4" />
+                        <span className="sr-only">Delete</span>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <div className="text-center py-6">
+              <p className="text-muted-foreground">No SSO integrations configured yet.</p>
+              <Button asChild className="mt-4">
+                <Link to="./add-sso-config">
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  Add Your First SSO Config
+                </Link>
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="startUrl"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>SSO Start URL</FormLabel>
-                <Input placeholder="https://my-sso-portal.awsapps.com/start" {...field} />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="region"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>SSO Region</FormLabel>
-                <ComboBox
-                  placeHolder="Select Region"
-                  selectedOption={field.value}
-                  options={regions.map((region) => ({
-                    value: region,
-                    label: region,
-                  }))}
-                  onChange={(option) => field.onChange(option.value)}
-                />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Connecting..." : "Start AWS SSO"}
-          </Button>
-        </form>
-      </Form>
+      {awsConfig.map((config) => {
+        return (
+          <div key={config.id}>
+            <Separator />
+            <div>{config.region}</div>
+            <AccountsTable accounts={config.accounts} />
+          </div>
+        );
+      })}
     </div>
   );
 };

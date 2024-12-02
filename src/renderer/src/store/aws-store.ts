@@ -1,22 +1,27 @@
+import type { AWSAccount } from "@shared/aws-accounts";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+interface AWSConfig {
+  id: string;
+  startUrl: string;
+  region: string;
+  accounts: AWSAccount[];
+}
+
 interface AWSStore {
-  startUrl?: string;
-  region?: string;
-  setStartUrl: (url: string, region: string) => void;
-  isAuthenticated: boolean;
-  setIsAuthenticated: (value: boolean) => void;
+  awsConfig: AWSConfig[];
+  addConfig: (config: AWSConfig) => void;
 }
 
 export const useAWSStore = create<AWSStore>()(
   persist(
     (set) => ({
-      ssoStartUrl: undefined,
-      region: undefined,
-      setStartUrl: (url, region) => set({ startUrl: url, region }),
-      isAuthenticated: false,
-      setIsAuthenticated: (value) => set({ isAuthenticated: value }),
+      awsConfig: [],
+      addConfig: (config) =>
+        set((state) => ({
+          awsConfig: [...state.awsConfig, config],
+        })),
     }),
     {
       name: "aws-store",

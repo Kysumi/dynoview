@@ -1,13 +1,17 @@
-import { createHashRouter, RouterProvider } from "react-router-dom";
+import { createHashRouter, Link, RouterProvider } from "react-router-dom";
 import { Layout } from "./routes/_layout";
 import { SettingsRoute } from "./routes/settings/route";
 import { QueryBuilderRoute } from "./routes/query-builder/route";
 import { HomeRoute } from "./routes/home/routes";
+import { Button } from "./components/Button";
+import { AddSSOConfig } from "./routes/settings/add-sso-config/route";
+import { ErrorElement } from "./components/ErrorElement";
 
 const router = createHashRouter([
   {
     path: "/",
     element: <Layout />,
+    errorElement: <ErrorElement />,
     children: [
       {
         path: "",
@@ -24,6 +28,10 @@ const router = createHashRouter([
       {
         path: "/settings",
         element: <SettingsRoute />,
+      },
+      {
+        path: "/settings/add-sso-config",
+        element: <AddSSOConfig />,
       },
     ],
   },
