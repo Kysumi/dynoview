@@ -127,8 +127,11 @@ export const Query = () => {
             <Input className="w-full" placeholder="Enter search key value" {...register("searchKeyValue")} />
           </FormItem>
         </div>
-        <Button type="submit">Run Query</Button>
-
+        <div>
+          <Button size={"lg"} type="submit">
+            Run Query
+          </Button>
+        </div>
         <ResultsTable data={result?.Items ?? []} columns={buildColumns(result, { maxDepth: 1 })} />
       </form>
     </Form>
