@@ -3,21 +3,45 @@ import { useEffect, useState } from "react";
 import useTableStore from "@renderer/store";
 import { regions } from "@shared/available-regions";
 import { Popover, PopoverContent, PopoverTrigger } from "@renderer/components/PopOver";
-import { Label } from "@radix-ui/react-select";
 import { Button } from "@renderer/components/Button";
 import { ComboBox } from "@renderer/components/ComboBox";
+import { useFormContext } from "react-hook-form";
+import type { TSSOuser } from "@shared/table-query";
+import { Label } from "@renderer/components/Label";
+import { useSSO } from "@renderer/hooks/use-sso";
 
 export const DatabaseSelector = () => {
+  const { watch } = useFormContext<TSSOuser>();
   const [tables, setTables] = useState<string[]>([]);
+  useSSO();
   const { activeTable, setActiveTable, activeAWSRegion, setAWSRegion } = useTableStore();
 
+  const accountId = watch("accountId");
+  const roleName = watch("roleName");
+
+  const loadTables = () => {
+    window.api
+      .listAvailableTables({ region: activeAWSRegion, accountId, roleName })
+      .then(setTables)
+      .catch(console.error);
+  };
+
+  /**
+   * Only run on first render
+   */
   useEffect(() => {
-    window.api.listAvailableTables({ region: activeAWSRegion }).then((tables) => setTables(tables));
-  }, [activeAWSRegion]);
+    loadTables();
+  }, []);
 
   return (
     <div>
-      <Popover>
+      <Popover
+        onOpenChange={(isOpen) => {
+          if (isOpen) {
+            loadTables();
+          }
+        }}
+      >
         <PopoverTrigger asChild>
           <Button className="w-full">
             <DatabaseIcon />
@@ -36,6 +60,8 @@ export const DatabaseSelector = () => {
                 const info = await window.api.getTableInformation({
                   tableName: option.value,
                   region: activeAWSRegion,
+                  accountId,
+                  roleName,
                 });
                 setActiveTable(info);
               }}

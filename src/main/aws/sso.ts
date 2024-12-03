@@ -15,6 +15,11 @@ interface Registration {
   expiresAt: number;
 }
 
+interface Token {
+  accessToken: string;
+  expiresAt: number;
+}
+
 export class AWSSSOHandler {
   private ssoOidcClient: SSOOIDCClient;
   private ssoClient: SSOClient;
@@ -50,9 +55,11 @@ export class AWSSSOHandler {
     return registration;
   }
 
-  async startSSOFlow() {
+  async startSSOFlow(): Promise<Token> {
     try {
       const client = await this.registerClient();
+
+      console.log(this.config.startUrl);
 
       const deviceAuthResponse = await this.ssoOidcClient.send(
         new StartDeviceAuthorizationCommand({
@@ -96,7 +103,11 @@ export class AWSSSOHandler {
     }
   }
 
-  private async pollForToken(deviceCode: string, client: { clientId: string; clientSecret: string }, interval: number) {
+  private async pollForToken(
+    deviceCode: string,
+    client: { clientId: string; clientSecret: string },
+    interval: number,
+  ): Promise<Token> {
     const maxAttempts = 60; // 5 minutes timeout
     let attempts = 0;
 
@@ -151,5 +162,25 @@ export class AWSSSOHandler {
       console.error("Failed to list account roles:", error);
       throw new Error("Failed to retrieve account roles");
     }
+  }
+
+  stored: Token | undefined = undefined;
+
+  async getToken(): Promise<Token> {
+    if (this.stored && this.stored.expiresAt > Date.now()) {
+      return this.stored;
+    }
+
+    const result = await this.startSSOFlow();
+    console.log(result);
+
+    const token: Token = {
+      accessToken: result.accessToken!,
+      expiresAt: Date.now() + (result.expiresIn || 28800) * 1000, // Default to 8 hours if not specified
+    };
+
+    this.stored = token;
+
+    return token;
   }
 }

@@ -5,8 +5,14 @@ import { getTableClient } from "../table";
 export const getTableInformation = async ({
   tableName,
   region,
-}: { tableName: string; region: string }): Promise<TableInfo> => {
-  const client = await getTableClient(region);
+  accountId,
+  roleName,
+}: { tableName: string; region: string; accountId: string; roleName: string }): Promise<TableInfo> => {
+  const client = await getTableClient({
+    accountId,
+    region,
+    roleName,
+  });
 
   const tableInfo = await client.send(new DescribeTableCommand({ TableName: tableName }));
 

@@ -3,10 +3,20 @@ import { getTableClient } from "../table";
 
 interface ListAvailableTablesArgs {
   region: string;
+  roleName: string;
+  accountId: string;
 }
 
-export const listAvailableTables = async ({ region }: ListAvailableTablesArgs): Promise<string[]> => {
-  const client = await getTableClient(region);
+export const listAvailableTables = async ({
+  region,
+  accountId,
+  roleName,
+}: ListAvailableTablesArgs): Promise<string[]> => {
+  const client = await getTableClient({
+    region,
+    accountId,
+    roleName,
+  });
 
   try {
     const tables = await client.send(new ListTablesCommand({}));

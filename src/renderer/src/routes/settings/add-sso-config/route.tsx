@@ -13,8 +13,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { AccountsTable } from "../components/AccountsTable";
-import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
 
 const ssoSchema = z.object({
   startUrl: z.string().url("Please enter a valid URL"),

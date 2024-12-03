@@ -14,6 +14,7 @@ import { ResultsTable } from "./ResultsTable";
 import { buildColumns } from "./buildColumns";
 import { AccountRoleSelector } from "@renderer/components/AccountRoleSelector";
 import { useAWSStore } from "@renderer/store/aws-store";
+import { DatabaseSelector } from "./components/DatabaseSelector";
 
 const SharedStuff = () => {
   const { awsConfig } = useAWSStore();
@@ -21,12 +22,12 @@ const SharedStuff = () => {
   const first = awsConfig[0];
 
   return (
-    <AccountRoleSelector
-      accounts={first.accounts}
-      onSelect={(account) => {
-        console.log(account);
-      }}
-    />
+    <>
+      <div className="flex gap-2">
+        <AccountRoleSelector accounts={first.accounts} />
+        <DatabaseSelector />
+      </div>
+    </>
   );
 };
 

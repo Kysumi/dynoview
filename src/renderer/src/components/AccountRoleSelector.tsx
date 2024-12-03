@@ -3,6 +3,9 @@ import { ComboBox } from "./ComboBox";
 import { FormItem, FormLabel } from "./Form";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 import type { TSSOuser } from "@shared/table-query";
+import { Popover, PopoverContent, PopoverTrigger } from "./PopOver";
+import { Users, ChevronsUpDown } from "lucide-react";
+import { Button } from "./Button";
 
 interface AccountRoleSelectorProps {
   accounts: AWSAccount[];
@@ -35,53 +38,63 @@ export const AccountRoleSelector = ({ accounts }: AccountRoleSelectorProps) => {
     })) ?? [];
 
   return (
-    <div className="flex gap-2">
-      <FormItem>
-        <FormLabel className="block">Account</FormLabel>
-        <Controller
-          control={control}
-          name="accountId"
-          rules={{ required: true }}
-          defaultValue={selectedAccountId}
-          render={({ field }) => (
-            <ComboBox
-              placeHolder="Select Account"
-              selectedOption={selectedAccountId}
-              options={accountOptions}
-              onChange={(option) => {
-                const account = accounts.find((a) => a.accountId === option.value);
-                if (account && account.roles?.[0]) {
-                  // onSelect(account, account.roles[0].roleName);
-                  field.onChange(account.accountId);
-                }
-              }}
-            />
-          )}
-        />
-      </FormItem>
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant={"outline"}>
+          <Users />
+          <span className="truncate">
+            {selectedAccount
+              ? `${selectedAccount.accountName || selectedAccount.accountId} / ${selectedRoleName}`
+              : "Select Account & Role"}
+          </span>
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="flex flex-col w-80 gap-4">
+        <FormItem>
+          <FormLabel>Account</FormLabel>
+          <Controller
+            control={control}
+            name="accountId"
+            rules={{ required: true }}
+            render={({ field }) => (
+              <ComboBox
+                placeHolder="Select Account"
+                selectedOption={field.value}
+                options={accountOptions}
+                onChange={(option) => {
+                  const account = accounts.find((a) => a.accountId === option.value);
+                  if (account && account.roles?.[0]) {
+                    field.onChange(account.accountId);
+                  }
+                }}
+              />
+            )}
+          />
+        </FormItem>
 
-      <FormItem>
-        <FormLabel className="block">Role</FormLabel>
-        <Controller
-          control={control}
-          name="roleName"
-          rules={{ required: true }}
-          defaultValue={selectedRoleName}
-          render={({ field }) => (
-            <ComboBox
-              placeHolder="Select Role"
-              selectedOption={selectedRoleName}
-              options={roleOptions}
-              onChange={(option) => {
-                if (selectedAccount) {
-                  field.onChange(option.value);
-                }
-              }}
-              disabled={!selectedAccount}
-            />
-          )}
-        />
-      </FormItem>
-    </div>
+        <FormItem>
+          <FormLabel>Role</FormLabel>
+          <Controller
+            control={control}
+            name="roleName"
+            rules={{ required: true }}
+            render={({ field }) => (
+              <ComboBox
+                placeHolder="Select Role"
+                selectedOption={field.value}
+                options={roleOptions}
+                onChange={(option) => {
+                  if (selectedAccount) {
+                    field.onChange(option.value);
+                  }
+                }}
+                disabled={!selectedAccount}
+              />
+            )}
+          />
+        </FormItem>
+      </PopoverContent>
+    </Popover>
   );
 };

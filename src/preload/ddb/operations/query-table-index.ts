@@ -3,9 +3,15 @@ import { getTableClient } from "../table";
 import type { TTableQuery } from "@shared/table-query";
 
 export const queryTableIndex = async (params: TTableQuery) => {
-  const { region, tableName, indexName, partitionKey, partitionKeyValue } = params;
+  const { region, tableName, indexName, partitionKey, partitionKeyValue, roleName, accountId } = params;
 
-  const dbClient = await getTableClient(region);
+  console.log(roleName, accountId);
+
+  const dbClient = await getTableClient({
+    accountId,
+    region,
+    roleName,
+  });
 
   const command = new QueryCommand({
     TableName: tableName,

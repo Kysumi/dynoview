@@ -30,4 +30,11 @@ export const attachAWSHandles = () => {
     }
     return await ssoHandler.listAccountRoles(params.accessToken, params.accountId);
   });
+
+  ipcMain.handle("aws:get-token", async () => {
+    if (!ssoHandler) {
+      throw new Error("SSO not initialized");
+    }
+    return await ssoHandler.getToken();
+  });
 };
