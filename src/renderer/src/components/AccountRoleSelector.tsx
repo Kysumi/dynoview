@@ -1,6 +1,5 @@
 import type { AWSAccount } from "@shared/aws-accounts";
 import { ComboBox } from "./ComboBox";
-import { FormItem, FormLabel } from "./Form";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 import type { TSSOuser } from "@shared/table-query";
 import { Popover, PopoverContent, PopoverTrigger } from "./PopOver";

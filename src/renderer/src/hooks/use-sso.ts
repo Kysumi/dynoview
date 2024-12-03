@@ -8,7 +8,6 @@ export const useSSO = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      console.log(isAuthenticated, expiresAt && Date.now() > expiresAt);
       const config = awsConfig[0];
       if (!config) {
         return;

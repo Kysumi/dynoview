@@ -35,13 +35,7 @@ export const DatabaseSelector = () => {
 
   return (
     <div>
-      <Popover
-        onOpenChange={(isOpen) => {
-          if (isOpen) {
-            loadTables();
-          }
-        }}
-      >
+      <Popover>
         <PopoverTrigger asChild>
           <Button className="w-full">
             <DatabaseIcon />
