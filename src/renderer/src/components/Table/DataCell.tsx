@@ -24,5 +24,10 @@ export const DataCell = ({ column, getValue }) => {
     return <div>{String(value)}</div>;
   }
 
+  if (typeof value === "number") {
+    return <div>{value}</div>;
+  }
+
+  console.log(value);
   throw new Error(`Unsupported data type for ${column.id}`);
 };
