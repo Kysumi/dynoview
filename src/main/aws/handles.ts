@@ -1,12 +1,13 @@
 import { ipcMain } from "electron";
-import { AWSSSOHandler } from "./sso";
+import { AWSSSOHandler, type Token } from "./sso";
 
 let ssoHandler: AWSSSOHandler | null = null;
+const store = new Map<string, Token>();
 
 export const attachAWSHandles = () => {
   // Register IPC handlers
   ipcMain.handle("aws:init-sso", async (_, config: { startUrl: string; region: string }) => {
-    ssoHandler = new AWSSSOHandler(config);
+    ssoHandler = new AWSSSOHandler(config, store);
     return true;
   });
 

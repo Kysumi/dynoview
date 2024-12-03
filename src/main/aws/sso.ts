@@ -15,7 +15,7 @@ interface Registration {
   expiresAt: number;
 }
 
-interface Token {
+export interface Token {
   accessToken: string;
   expiresAt: number;
 }
@@ -24,11 +24,17 @@ export class AWSSSOHandler {
   private ssoOidcClient: SSOOIDCClient;
   private ssoClient: SSOClient;
   private store: SecureLocalStore;
+  private tokenStore: Map<string, Token>;
+  private tokenLock: Promise<Token> | null = null;
 
-  constructor(private config: { startUrl: string; region: string }) {
+  constructor(
+    private config: { startUrl: string; region: string },
+    tokenStore: Map<string, Token>,
+  ) {
     this.ssoOidcClient = new SSOOIDCClient({ region: config.region });
     this.ssoClient = new SSOClient({ region: config.region });
     this.store = new SecureLocalStore("sso-client-registration");
+    this.tokenStore = tokenStore;
   }
 
   private async registerClient(): Promise<Registration> {
@@ -164,23 +170,37 @@ export class AWSSSOHandler {
     }
   }
 
-  stored: Token | undefined = undefined;
-
   async getToken(): Promise<Token> {
-    if (this.stored && this.stored.expiresAt > Date.now()) {
-      return this.stored;
+    const key = "token";
+
+    if (this.tokenStore.has(key)) {
+      const token = this.tokenStore.get(key);
+      if (token && token.expiresAt > Date.now()) {
+        return token;
+      }
     }
 
-    const result = await this.startSSOFlow();
-    console.log(result);
+    // If there's an ongoing token request, wait for it
+    if (this.tokenLock) {
+      return this.tokenLock;
+    }
 
-    const token: Token = {
-      accessToken: result.accessToken!,
-      expiresAt: Date.now() + (result.expiresIn || 28800) * 1000, // Default to 8 hours if not specified
-    };
+    // Create a new token request
+    this.tokenLock = (async () => {
+      try {
+        const result = await this.startSSOFlow();
+        const token: Token = {
+          accessToken: result.accessToken!,
+          expiresAt: Date.now() + (result.expiresIn || 28800) * 1000,
+        };
+        this.tokenStore.set(key, token);
+        return token;
+      } finally {
+        // Clear the lock when done (success or failure)
+        this.tokenLock = null;
+      }
+    })();
 
-    this.stored = token;
-
-    return token;
+    return this.tokenLock;
   }
 }
