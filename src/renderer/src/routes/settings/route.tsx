@@ -3,8 +3,8 @@ import { useAWSStore } from "@renderer/store/aws-store";
 import { AccountsTable } from "./components/AccountsTable";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@renderer/components/Card";
 import { Button } from "@renderer/components/Button";
-import { TableHeader, TableRow, TableHead, TableBody, TableCell } from "@renderer/components/Table/Table";
-import { PlusCircle, Table, Settings, Trash2 } from "lucide-react";
+import { TableHeader, TableRow, TableHead, TableBody, TableCell, Table } from "@renderer/components/Table/Table";
+import { PlusCircle, Settings, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export const SettingsRoute = () => {
