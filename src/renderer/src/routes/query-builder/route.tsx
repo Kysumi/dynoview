@@ -101,7 +101,7 @@ export const PageTab = ({ id, name, onRemove }: { id: string; name: string; onRe
 };
 
 export const QueryBuilderRoute = () => {
-  const { activeTable, tabs, rearrangeTabs, removeTab, addNewTab } = useTableStore();
+  const { tabs, rearrangeTabs, removeTab, addNewTab } = useTableStore();
   const [activeTab, setActiveTab] = useState<string>(tabs[0]?.id);
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -153,7 +153,7 @@ export const QueryBuilderRoute = () => {
 
       {tabs.map((tab) => (
         <TabsContent key={tab.id} value={tab.id}>
-          <TabProvider value={{ tab }}>{activeTable && <QueryBuilder />}</TabProvider>
+          <TabProvider value={{ tab }}>{<QueryBuilder />}</TabProvider>
         </TabsContent>
       ))}
     </Tabs>

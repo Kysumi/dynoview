@@ -1,6 +1,5 @@
 import { ChevronsUpDown, DatabaseIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import useTableStore from "@renderer/store";
 import { regions } from "@shared/available-regions";
 import { Popover, PopoverContent, PopoverTrigger } from "@renderer/components/PopOver";
 import { Button } from "@renderer/components/Button";
@@ -8,13 +7,17 @@ import { ComboBox } from "@renderer/components/ComboBox";
 import { useFormContext } from "react-hook-form";
 import type { TSSOuser } from "@shared/table-query";
 import { Label } from "@renderer/components/Label";
-import { useSSO } from "@renderer/hooks/use-sso";
+import useTableStore from "@renderer/store";
+import { useTab } from "@renderer/hooks/TabContext";
 
 export const DatabaseSelector = () => {
   const { watch } = useFormContext<TSSOuser>();
   const [tables, setTables] = useState<string[]>([]);
-  useSSO();
-  const { activeTable, setActiveTable, activeAWSRegion, setAWSRegion } = useTableStore();
+  const { updateTab } = useTableStore();
+  const { tab } = useTab();
+
+  const activeAWSRegion = tab.awsRegion;
+  const activeTable = tab.table;
 
   const accountId = watch("accountId");
   const roleName = watch("roleName");
@@ -22,7 +25,14 @@ export const DatabaseSelector = () => {
   const loadTables = () => {
     window.api
       .listAvailableTables({ region: activeAWSRegion, accountId, roleName })
-      .then(setTables)
+      .then((tables) => {
+        const newAccountHasTable = tables.includes(activeTable?.tableName ?? "");
+        if (!newAccountHasTable) {
+          updateTab(tab.id, { table: undefined });
+        }
+
+        setTables(tables);
+      })
       .catch(console.error);
   };
 
@@ -31,7 +41,7 @@ export const DatabaseSelector = () => {
    */
   useEffect(() => {
     loadTables();
-  }, []);
+  }, [accountId, roleName]);
 
   return (
     <div>
@@ -57,7 +67,7 @@ export const DatabaseSelector = () => {
                   accountId,
                   roleName,
                 });
-                setActiveTable(info);
+                updateTab(tab.id, { table: info });
               }}
             />
           </div>
@@ -69,8 +79,7 @@ export const DatabaseSelector = () => {
               selectedOption={activeAWSRegion}
               options={regions.map((region) => ({ value: region, label: region }))}
               onChange={(option) => {
-                setActiveTable(undefined);
-                setAWSRegion(option.value);
+                updateTab(tab.id, { table: undefined, awsRegion: option.value });
               }}
             />
           </div>

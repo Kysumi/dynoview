@@ -1,7 +1,7 @@
-import useTableStore from "@renderer/store";
+import useTableStore, { type Tab } from "@renderer/store";
 import QueryOperator from "./QueryOperator";
 import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TableQuery, type TTableQuery } from "@shared/table-query";
 import type { QueryCommandOutput } from "@aws-sdk/client-dynamodb";
@@ -15,6 +15,8 @@ import { buildColumns } from "./buildColumns";
 import { AccountRoleSelector } from "@renderer/components/AccountRoleSelector";
 import { useAWSStore } from "@renderer/store/aws-store";
 import { DatabaseSelector } from "./components/DatabaseSelector";
+import { Separator } from "@renderer/components/Separator";
+import { Label } from "@renderer/components/Label";
 
 const SharedStuff = () => {
   const { awsConfig } = useAWSStore();
@@ -22,19 +24,16 @@ const SharedStuff = () => {
   const first = awsConfig[0];
 
   return (
-    <>
-      <div className="flex gap-2">
-        <AccountRoleSelector accounts={first.accounts} />
-        <DatabaseSelector />
-      </div>
-    </>
+    <div className="flex gap-2">
+      <AccountRoleSelector accounts={first.accounts} />
+      <DatabaseSelector />
+    </div>
   );
 };
 
 export const Query = () => {
   const { tab } = useTab();
-  const { activeTable, activeAWSRegion, storeTabFormState } = useTableStore();
-  const [result, setResult] = useState<QueryCommandOutput | null>(null);
+  const { storeTabFormState } = useTableStore();
 
   const form = useForm<TTableQuery>({
     resolver: zodResolver(TableQuery),
@@ -52,7 +51,20 @@ export const Query = () => {
     };
   }, []);
 
-  const { control, register, handleSubmit, setValue } = form;
+  return (
+    <Form {...form}>
+      <SharedStuff />
+      <FormContent tab={tab} />
+    </Form>
+  );
+};
+
+const FormContent = ({ tab }: { tab: Tab }) => {
+  const [result, setResult] = useState<QueryCommandOutput | null>(null);
+  const { control, register, handleSubmit, setValue } = useFormContext();
+
+  const activeTable = tab.table;
+  const activeAWSRegion = tab.awsRegion;
 
   if (!activeTable) return null;
 
@@ -72,21 +84,20 @@ export const Query = () => {
   );
 
   return (
-    <Form {...form}>
-      <form className="flex flex-col gap-2" onSubmit={onSubmit}>
-        <input type="hidden" {...register("tableName")} value={activeTable.tableName} />
-        <input type="hidden" {...register("region")} value={activeAWSRegion} />
-        <input type="hidden" {...register("limit", { valueAsNumber: true })} value={50} />
+    <form className="flex flex-col gap-2 mt-2" onSubmit={onSubmit}>
+      <input type="hidden" {...register("tableName")} value={activeTable.tableName} />
+      <input type="hidden" {...register("region")} value={activeAWSRegion} />
+      <input type="hidden" {...register("limit", { valueAsNumber: true })} value={50} />
 
-        <SharedStuff />
-
-        {/* Index */}
-        <Controller
-          control={control}
-          name="indexName"
-          rules={{ required: true }}
-          defaultValue={indexes[0].name}
-          render={({ field }) => (
+      {/* Index */}
+      <Controller
+        control={control}
+        name="indexName"
+        rules={{ required: true }}
+        defaultValue={indexes[0].name}
+        render={({ field }) => (
+          <div className="flex flex-col gap-2">
+            <Label>Region</Label>
             <ComboBox
               placeHolder="Select index"
               selectedOption={field.value}
@@ -104,37 +115,37 @@ export const Query = () => {
                 setValue("partitionKey", index.partitionKey.name);
               }}
             />
-          )}
-        />
+          </div>
+        )}
+      />
 
-        <FormItem>
-          <FormLabel>Partition Key</FormLabel>
-          <Input placeholder="Enter partition key value" required={true} {...register("partitionKeyValue")} />
+      <FormItem>
+        <FormLabel>Partition Key</FormLabel>
+        <Input placeholder="Enter partition key value" required={true} {...register("partitionKeyValue")} />
+      </FormItem>
+
+      {/* Search Key */}
+      <div className="flex gap-2">
+        <FormItem className="min-w-40">
+          <FormLabel>Operator</FormLabel>
+          <Controller
+            control={control}
+            name="searchKeyOperator"
+            render={({ field }) => <QueryOperator onChange={field.onChange} value={field.value} />}
+          />
         </FormItem>
 
-        {/* Search Key */}
-        <div className="flex gap-2">
-          <FormItem className="min-w-40">
-            <FormLabel>Operator</FormLabel>
-            <Controller
-              control={control}
-              name="searchKeyOperator"
-              render={({ field }) => <QueryOperator onChange={field.onChange} value={field.value} />}
-            />
-          </FormItem>
-
-          <FormItem className="flex-1">
-            <FormLabel>Search Key Value</FormLabel>
-            <Input className="w-full" placeholder="Enter search key value" {...register("searchKeyValue")} />
-          </FormItem>
-        </div>
-        <div>
-          <Button size={"lg"} type="submit">
-            Run Query
-          </Button>
-        </div>
-        <ResultsTable data={result?.Items ?? []} columns={buildColumns(result, { maxDepth: 1 })} />
-      </form>
-    </Form>
+        <FormItem className="flex-1">
+          <FormLabel>Search Key Value</FormLabel>
+          <Input className="w-full" placeholder="Enter search key value" {...register("searchKeyValue")} />
+        </FormItem>
+      </div>
+      <div>
+        <Button size={"lg"} type="submit">
+          Run Query
+        </Button>
+      </div>
+      <ResultsTable data={result?.Items ?? []} columns={buildColumns(result, { maxDepth: 1 })} />
+    </form>
   );
 };

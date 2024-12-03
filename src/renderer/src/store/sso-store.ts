@@ -4,7 +4,6 @@ import { persist } from "zustand/middleware";
 interface SSOState {
   isInitializing: boolean;
   isAuthenticated: boolean;
-  accessToken: string | null;
   expiresAt: number | null;
   startSSO: (config: { startUrl: string; region: string }) => Promise<void>;
 }
@@ -35,14 +34,13 @@ export const useSSOStore = create<SSOState>()(
           console.log(token);
 
           set({
-            accessToken: token.accessToken,
             expiresAt: token.expiresAt,
             isAuthenticated: true,
             isInitializing: false,
           });
         } catch (error) {
           console.error("Failed to start SSO:", error);
-          set({ isAuthenticated: false, accessToken: null, expiresAt: null, isInitializing: false });
+          set({ isAuthenticated: false, expiresAt: null, isInitializing: false });
         }
       },
     }),
