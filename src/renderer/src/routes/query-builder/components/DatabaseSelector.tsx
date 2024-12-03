@@ -11,7 +11,7 @@ import useTableStore from "@renderer/store";
 import { useTab } from "@renderer/hooks/TabContext";
 
 export const DatabaseSelector = () => {
-  const { watch } = useFormContext<TSSOuser>();
+  const { watch, setValue } = useFormContext<TSSOuser>();
   const [tables, setTables] = useState<string[]>([]);
   const { updateTab } = useTableStore();
   const { tab } = useTab();
@@ -68,6 +68,7 @@ export const DatabaseSelector = () => {
                   roleName,
                 });
                 updateTab(tab.id, { table: info });
+                setValue("tableName", info.tableName);
               }}
             />
           </div>
@@ -80,6 +81,7 @@ export const DatabaseSelector = () => {
               options={regions.map((region) => ({ value: region, label: region }))}
               onChange={(option) => {
                 updateTab(tab.id, { table: undefined, awsRegion: option.value });
+                setValue("region", option.value);
               }}
             />
           </div>
