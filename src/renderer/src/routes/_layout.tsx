@@ -1,5 +1,6 @@
 import { AppSidebar } from "@renderer/components/AppSidebar";
 import { SidebarProvider, SidebarTrigger } from "@renderer/components/SideBar";
+import { Toaster } from "@renderer/components/Toaster";
 import { Outlet } from "react-router-dom";
 
 export const Layout = () => {
@@ -10,6 +11,7 @@ export const Layout = () => {
         <SidebarTrigger />
         <div className="p-2">
           <Outlet />
+          <Toaster />
         </div>
       </main>
     </SidebarProvider>
