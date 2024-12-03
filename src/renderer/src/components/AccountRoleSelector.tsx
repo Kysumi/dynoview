@@ -6,6 +6,7 @@ import type { TSSOuser } from "@shared/table-query";
 import { Popover, PopoverContent, PopoverTrigger } from "./PopOver";
 import { Users, ChevronsUpDown } from "lucide-react";
 import { Button } from "./Button";
+import { Label } from "./Label";
 
 interface AccountRoleSelectorProps {
   accounts: AWSAccount[];
@@ -50,50 +51,46 @@ export const AccountRoleSelector = ({ accounts }: AccountRoleSelectorProps) => {
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="flex flex-col w-80 gap-4">
-        <FormItem>
-          <FormLabel>Account</FormLabel>
-          <Controller
-            control={control}
-            name="accountId"
-            rules={{ required: true }}
-            render={({ field }) => (
-              <ComboBox
-                placeHolder="Select Account"
-                selectedOption={field.value}
-                options={accountOptions}
-                onChange={(option) => {
-                  const account = accounts.find((a) => a.accountId === option.value);
-                  if (account && account.roles?.[0]) {
-                    field.onChange(account.accountId);
-                  }
-                }}
-              />
-            )}
-          />
-        </FormItem>
+      <PopoverContent className="flex flex-col w-80 gap-2">
+        <Label>Account</Label>
+        <Controller
+          control={control}
+          name="accountId"
+          rules={{ required: true }}
+          render={({ field }) => (
+            <ComboBox
+              placeHolder="Select Account"
+              selectedOption={field.value}
+              options={accountOptions}
+              onChange={(option) => {
+                const account = accounts.find((a) => a.accountId === option.value);
+                if (account && account.roles?.[0]) {
+                  field.onChange(account.accountId);
+                }
+              }}
+            />
+          )}
+        />
 
-        <FormItem>
-          <FormLabel>Role</FormLabel>
-          <Controller
-            control={control}
-            name="roleName"
-            rules={{ required: true }}
-            render={({ field }) => (
-              <ComboBox
-                placeHolder="Select Role"
-                selectedOption={field.value}
-                options={roleOptions}
-                onChange={(option) => {
-                  if (selectedAccount) {
-                    field.onChange(option.value);
-                  }
-                }}
-                disabled={!selectedAccount}
-              />
-            )}
-          />
-        </FormItem>
+        <Label>Role</Label>
+        <Controller
+          control={control}
+          name="roleName"
+          rules={{ required: true }}
+          render={({ field }) => (
+            <ComboBox
+              placeHolder="Select Role"
+              selectedOption={field.value}
+              options={roleOptions}
+              onChange={(option) => {
+                if (selectedAccount) {
+                  field.onChange(option.value);
+                }
+              }}
+              disabled={!selectedAccount}
+            />
+          )}
+        />
       </PopoverContent>
     </Popover>
   );
