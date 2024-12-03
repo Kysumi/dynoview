@@ -70,6 +70,9 @@ export class AWSSSOHandler {
         webPreferences: {
           nodeIntegration: false,
           contextIsolation: true,
+          sandbox: true,
+          webSecurity: true,
+          allowRunningInsecureContent: false,
         },
       });
 
