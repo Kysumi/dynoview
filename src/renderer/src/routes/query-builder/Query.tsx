@@ -15,7 +15,6 @@ import { buildColumns } from "./buildColumns";
 import { AccountRoleSelector } from "@renderer/components/AccountRoleSelector";
 import { useAWSStore } from "@renderer/store/aws-store";
 import { DatabaseSelector } from "./components/DatabaseSelector";
-import { Separator } from "@renderer/components/Separator";
 import { Label } from "@renderer/components/Label";
 
 const SharedStuff = () => {
