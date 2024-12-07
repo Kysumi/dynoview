@@ -7,6 +7,7 @@ interface AWSConfig {
   startUrl: string;
   region: string;
   accounts: AWSAccount[];
+  name: string;
 }
 
 interface AWSStore {

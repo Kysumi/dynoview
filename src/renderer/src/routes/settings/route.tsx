@@ -79,7 +79,7 @@ export const SettingsRoute = () => {
       {awsConfig.map((config) => {
         return (
           <div key={config.id}>
-            <AccountsTable accounts={config.accounts} />
+            <AccountsTable configName={config.name ?? ""} accounts={config.accounts} />
           </div>
         );
       })}
