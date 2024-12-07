@@ -43,7 +43,7 @@ export const DatabaseSelector = () => {
     <div>
       <Popover>
         <PopoverTrigger asChild>
-          <Button className="w-full">
+          <Button variant={"outline"} className="w-full">
             <DatabaseIcon />
             <span className="truncate">{activeTable?.tableName ?? "Select Table"}</span>
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -65,6 +65,7 @@ export const DatabaseSelector = () => {
                 });
                 updateTab(tab.id, { table: info });
                 setValue("tableName", info.tableName);
+                setValue("index");
               }}
             />
           </div>
