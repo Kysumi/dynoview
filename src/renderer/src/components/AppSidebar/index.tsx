@@ -13,6 +13,7 @@ import {
 } from "../SideBar";
 import Versions from "../Versions";
 import { Link, useLocation } from "react-router-dom";
+import { ThemeToggle } from "../ThemeToggle";
 
 const items = [
   {
@@ -64,7 +65,10 @@ export const AppSidebar = () => {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <Versions />
+        <div className="flex gap-2 items-center">
+          <Versions />
+          <ThemeToggle />
+        </div>
       </SidebarFooter>
     </Sidebar>
   );
