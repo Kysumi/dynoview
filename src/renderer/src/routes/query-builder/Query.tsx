@@ -47,6 +47,7 @@ const FormContent = ({ tab }: { tab: Tab }) => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<QueryCommandOutput | null>(null);
   const { control, register, handleSubmit, setValue } = useFormContext();
+  const { storeTabFormState } = useTabStore();
 
   const activeTable = tab.table;
   const activeAWSRegion = tab.awsRegion;
@@ -59,6 +60,9 @@ const FormContent = ({ tab }: { tab: Tab }) => {
   const onSubmit = handleSubmit(
     async (data) => {
       setLoading(true);
+      // We want to store the formstate at the time of query
+      // so that they can leave the app and return to the same state
+      storeTabFormState(tab.id, data);
       const result = await window.api.queryTableIndex(data);
       setResult(result);
       setLoading(false);

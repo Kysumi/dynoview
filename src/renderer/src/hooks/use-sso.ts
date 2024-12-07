@@ -4,8 +4,9 @@ import { useAWSStore } from "@renderer/store/aws-store";
 
 export const useSSO = () => {
   const { awsConfig } = useAWSStore();
-  const { isAuthenticated, accessToken, expiresAt, startSSO } = useSSOStore();
+  const { isAuthenticated, expiresAt, startSSO } = useSSOStore();
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Don't require the AWS Config
   useEffect(() => {
     const checkAuth = async () => {
       const config = awsConfig[0];
@@ -22,5 +23,5 @@ export const useSSO = () => {
     checkAuth();
   }, [isAuthenticated, expiresAt, startSSO]);
 
-  return { isAuthenticated, accessToken };
+  return { isAuthenticated };
 };

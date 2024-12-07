@@ -15,6 +15,11 @@ interface Registration {
   expiresAt: number;
 }
 
+export interface AWSToken {
+  accessToken: string;
+  expiresIn: number;
+}
+
 export interface Token {
   accessToken: string;
   expiresAt: number;
@@ -61,7 +66,7 @@ export class AWSSSOHandler {
     return registration;
   }
 
-  async startSSOFlow(): Promise<Token> {
+  async startSSOFlow(): Promise<AWSToken> {
     try {
       const client = await this.registerClient();
 
@@ -110,7 +115,7 @@ export class AWSSSOHandler {
     deviceCode: string,
     client: { clientId: string; clientSecret: string },
     interval: number,
-  ): Promise<Token> {
+  ): Promise<AWSToken> {
     const maxAttempts = 60; // 5 minutes timeout
     let attempts = 0;
 
@@ -124,6 +129,10 @@ export class AWSSSOHandler {
             deviceCode,
           }),
         );
+
+        if (!tokenResponse.accessToken || !tokenResponse.expiresIn) {
+          throw new Error("Access token is missing");
+        }
 
         return {
           accessToken: tokenResponse.accessToken,
@@ -187,7 +196,7 @@ export class AWSSSOHandler {
       try {
         const result = await this.startSSOFlow();
         const token: Token = {
-          accessToken: result.accessToken!,
+          accessToken: result.accessToken,
           expiresAt: Date.now() + (result.expiresIn || 28800) * 1000,
         };
         this.tokenStore.set(key, token);

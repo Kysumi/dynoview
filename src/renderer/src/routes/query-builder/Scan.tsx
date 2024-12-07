@@ -43,6 +43,7 @@ export const Scan = () => {
 const FormContent = ({ tab }: { tab: Tab }) => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ScanCommandOutput | null>(null);
+  const { storeTabFormState } = useTabStore();
 
   const { register, handleSubmit } = useFormContext<TTableScan>();
   const activeTable = tab.table;
@@ -51,6 +52,9 @@ const FormContent = ({ tab }: { tab: Tab }) => {
 
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true);
+    // We want to store the formstate at the time of query
+    // so that they can leave the app and return to the same state
+    storeTabFormState(tab.id, data);
 
     const result = await window.api.scanTable(data).catch(() => {
       return null;
