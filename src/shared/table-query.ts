@@ -7,6 +7,21 @@ const SSOuser = z.object({
 
 export type TSSOuser = z.infer<typeof SSOuser>;
 
+export enum DynamoOperatorsEnum {
+  equals = "=",
+  less_than = "<",
+  less_than_equals = "<=",
+  greater_than = ">",
+  greater_than_equals = ">=",
+  between = "between",
+  begins_with = "begins_with",
+}
+
+const ddbOperators = z.nativeEnum(DynamoOperatorsEnum, {
+  description: "Valid DynamoDB comparison operators",
+});
+export type TDDBOperators = z.infer<typeof ddbOperators>;
+
 export const TableQuery = z
   .object({
     region: z.string(),
@@ -18,7 +33,7 @@ export const TableQuery = z
     partitionKeyValue: z.string(),
 
     searchKeyValue: z.string(),
-    searchKeyOperator: z.string(),
+    searchKeyOperator: ddbOperators,
 
     limit: z.number().optional(),
   })
