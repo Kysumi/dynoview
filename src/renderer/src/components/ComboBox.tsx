@@ -4,10 +4,12 @@ import { Popover, PopoverContent, PopoverTrigger } from "./PopOver";
 import { Command, CommandInput, CommandList, CommandGroup, CommandItem, CommandEmpty } from "./Command";
 import { Button } from "./Button";
 import { cn } from "./lib/utils";
+import type { Command as CommandPrimitive } from "cmdk";
 
 interface ComboBoxOption {
   value: string;
   label: string;
+  keywords?: string[];
 }
 
 interface ComboBoxProps {
@@ -18,6 +20,7 @@ interface ComboBoxProps {
   selectedOption?: string;
   noResultsText?: string;
   disabled?: boolean;
+  filter?: Pick<React.ComponentPropsWithoutRef<typeof CommandPrimitive>, "filter">["filter"];
 }
 
 export const ComboBox = ({
@@ -60,6 +63,7 @@ export const ComboBox = ({
                     onChange(option);
                     setOpen(false);
                   }}
+                  keywords={option.keywords}
                 >
                   <Check
                     className={cn("mr-2 h-4 w-4", selectedOption === option.value ? "opacity-100" : "opacity-0")}

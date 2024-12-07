@@ -29,6 +29,7 @@ export const AccountRoleSelector = ({ accounts }: AccountRoleSelectorProps) => {
   const accountOptions = accounts.map((account) => ({
     value: account.accountId,
     label: account.accountName || account.accountId,
+    keywords: [account.accountName ?? account.accountId],
   }));
 
   const roleOptions =
@@ -67,6 +68,43 @@ export const AccountRoleSelector = ({ accounts }: AccountRoleSelectorProps) => {
                   field.onChange(account.accountId);
                   setValue("roleName", account.roles[0].roleName);
                 }
+              }}
+              filter={(value, search) => {
+                const option = accountOptions.find((opt) => opt.value === value);
+                if (!option) {
+                  return 0;
+                }
+
+                // If no search term, show all options
+                if (!search) return 1;
+
+                const searchLower = search.toLowerCase();
+                const labelLower = option.label.toLowerCase();
+
+                // Exact match gets highest priority
+                if (labelLower === searchLower) {
+                  return 1;
+                }
+
+                // Starts with search term gets second priority
+                if (labelLower.startsWith(searchLower)) {
+                  return 0.8;
+                }
+
+                // Contains search term gets third priority
+                if (labelLower.includes(searchLower)) {
+                  return 0.6;
+                }
+
+                // Words that contain parts of the search term get fourth priority
+                const searchParts = searchLower.split(/\s+/);
+                const matchesAllParts = searchParts.every((part) => labelLower.includes(part));
+                if (matchesAllParts) {
+                  return 0.4;
+                }
+
+                // No match don't show the user this option
+                return 0;
               }}
             />
           )}

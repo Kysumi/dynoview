@@ -32,6 +32,7 @@ export const TableQuery = z
     partitionKey: z.string(),
     partitionKeyValue: z.string(),
 
+    searchKey: z.string(),
     searchKeyValue: z.string(),
     searchKeyOperator: ddbOperators,
 
