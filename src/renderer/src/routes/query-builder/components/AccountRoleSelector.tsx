@@ -12,7 +12,7 @@ interface AccountRoleSelectorProps {
 }
 
 export const AccountRoleSelector = ({ accounts }: AccountRoleSelectorProps) => {
-  const { control } = useFormContext<TSSOuser>();
+  const { control, setValue } = useFormContext<TSSOuser>();
 
   const selectedAccountId = useWatch({
     control,
@@ -65,6 +65,7 @@ export const AccountRoleSelector = ({ accounts }: AccountRoleSelectorProps) => {
                 const account = accounts.find((a) => a.accountId === option.value);
                 if (account?.roles?.[0]) {
                   field.onChange(account.accountId);
+                  setValue("roleName", account.roles[0].roleName);
                 }
               }}
             />

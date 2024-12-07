@@ -80,28 +80,30 @@ const FormContent = ({ tab }: { tab: Tab }) => {
         name="indexName"
         rules={{ required: true }}
         defaultValue={indexes[0].name}
-        render={({ field }) => (
-          <div className="flex flex-col gap-2">
-            <Label>Index</Label>
-            <ComboBox
-              placeHolder="Select index"
-              selectedOption={field.value}
-              options={indexes.map((index) => ({ value: index.name, label: index.name }))}
-              onChange={async (option): Promise<void> => {
-                // Set the index name
-                field.onChange(option.value);
+        render={({ field }) => {
+          return (
+            <div className="flex flex-col gap-2">
+              <Label>Index</Label>
+              <ComboBox
+                placeHolder="Select index"
+                selectedOption={field.value}
+                options={indexes.map((index) => ({ value: index.name, label: index.name }))}
+                onChange={async (option): Promise<void> => {
+                  // Set the index name
+                  field.onChange(option.value);
 
-                const index = indexes.find((index) => index.name === option.value);
+                  const index = indexes.find((index) => index.name === option.value);
 
-                if (!index) {
-                  return;
-                }
+                  if (!index) {
+                    return;
+                  }
 
-                setValue("partitionKey", index.partitionKey.name);
-              }}
-            />
-          </div>
-        )}
+                  setValue("partitionKey", index.partitionKey.name);
+                }}
+              />
+            </div>
+          );
+        }}
       />
 
       <FormItem>

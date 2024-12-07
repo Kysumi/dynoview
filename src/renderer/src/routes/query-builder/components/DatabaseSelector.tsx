@@ -10,8 +10,13 @@ import { Label } from "@renderer/components/Label";
 import { useTabStore } from "@renderer/store/tab-store";
 import { useTab } from "@renderer/hooks/TabContext";
 
+interface TableProps extends TSSOuser {
+  tableName?: string;
+  region: string;
+}
+
 export const DatabaseSelector = () => {
-  const { watch, setValue } = useFormContext<TSSOuser>();
+  const { watch, setValue } = useFormContext<TableProps>();
   const [tables, setTables] = useState<string[]>([]);
 
   const { updateTab } = useTabStore();
@@ -65,7 +70,6 @@ export const DatabaseSelector = () => {
                 });
                 updateTab(tab.id, { table: info });
                 setValue("tableName", info.tableName);
-                setValue("index");
               }}
             />
           </div>
