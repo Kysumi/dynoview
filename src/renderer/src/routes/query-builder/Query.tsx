@@ -97,7 +97,7 @@ const FormContent = ({ tab }: { tab: Tab }) => {
         defaultValue={indexes[0].name}
         render={({ field }) => (
           <div className="flex flex-col gap-2">
-            <Label>Region</Label>
+            <Label>Index</Label>
             <ComboBox
               placeHolder="Select index"
               selectedOption={field.value}
