@@ -72,8 +72,6 @@ const FormContent = ({ tab }: { tab: Tab }) => {
 
   const onSubmit = handleSubmit(
     async (data) => {
-      console.log(data);
-
       const result = await window.api.queryTableIndex(data);
       setResult(result);
     },

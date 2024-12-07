@@ -81,8 +81,6 @@ if (!gotTheLock) {
     });
 
     // IPC test
-    ipcMain.on("ping", () => console.log("pong"));
-
     attachAWSHandles();
 
     createWindow();

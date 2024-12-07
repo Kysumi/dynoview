@@ -5,8 +5,6 @@ import type { TTableQuery } from "@shared/table-query";
 export const queryTableIndex = async (params: TTableQuery) => {
   const { region, tableName, indexName, partitionKey, partitionKeyValue, roleName, accountId } = params;
 
-  console.log(roleName, accountId);
-
   const dbClient = await getTableClient({
     accountId,
     region,

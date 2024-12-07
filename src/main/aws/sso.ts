@@ -65,8 +65,6 @@ export class AWSSSOHandler {
     try {
       const client = await this.registerClient();
 
-      console.log(this.config.startUrl);
-
       const deviceAuthResponse = await this.ssoOidcClient.send(
         new StartDeviceAuthorizationCommand({
           clientId: client.clientId,
@@ -89,7 +87,6 @@ export class AWSSSOHandler {
         },
       });
 
-      console.log("Loading URL:", deviceAuthResponse.verificationUriComplete);
       if (deviceAuthResponse.verificationUriComplete) {
         await authWindow.loadURL(deviceAuthResponse.verificationUriComplete);
       } else {

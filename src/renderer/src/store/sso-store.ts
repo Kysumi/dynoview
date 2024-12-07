@@ -18,20 +18,15 @@ export const useSSOStore = create<SSOState>()(
 
       startSSO: async (config) => {
         const state = get();
-        console.log(state);
-
-        console.warn("Refreshing SSO");
-        await window.electron.ipcRenderer.invoke("aws:init-sso", config);
 
         if (state.isInitializing) {
           return;
         }
+        await window.electron.ipcRenderer.invoke("aws:init-sso", config);
 
         set({ isInitializing: true });
         try {
           const token = await window.electron.ipcRenderer.invoke("aws:get-token");
-
-          console.log(token);
 
           set({
             expiresAt: token.expiresAt,

@@ -22,8 +22,6 @@ export const Scan = () => {
       limit: Number.parseInt(limit),
     });
 
-    console.log(result);
-
     setResult(result);
   };
 
