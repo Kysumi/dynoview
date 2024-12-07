@@ -17,6 +17,7 @@ interface ComboBoxProps {
   onChange: (option: ComboBoxOption) => void;
   selectedOption?: string;
   noResultsText?: string;
+  disabled?: boolean;
 }
 
 export const ComboBox = ({
@@ -26,6 +27,7 @@ export const ComboBox = ({
   selectedOption,
   placeHolder,
   noResultsText,
+  disabled,
 }: ComboBoxProps) => {
   const [open, setOpen] = React.useState(false);
 
@@ -33,7 +35,7 @@ export const ComboBox = ({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          disabled={options.length === 0}
+          disabled={options.length === 0 || disabled}
           variant="outline"
           aria-expanded={open}
           className={cn("justify-between max-w-full", className)}

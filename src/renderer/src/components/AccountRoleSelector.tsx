@@ -63,7 +63,7 @@ export const AccountRoleSelector = ({ accounts }: AccountRoleSelectorProps) => {
               options={accountOptions}
               onChange={(option) => {
                 const account = accounts.find((a) => a.accountId === option.value);
-                if (account && account.roles?.[0]) {
+                if (account?.roles?.[0]) {
                   field.onChange(account.accountId);
                 }
               }}
