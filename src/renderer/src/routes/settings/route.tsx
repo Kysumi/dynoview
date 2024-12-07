@@ -79,8 +79,6 @@ export const SettingsRoute = () => {
       {awsConfig.map((config) => {
         return (
           <div key={config.id}>
-            <Separator />
-            <div>{config.region}</div>
             <AccountsTable accounts={config.accounts} />
           </div>
         );
