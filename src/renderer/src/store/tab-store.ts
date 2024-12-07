@@ -20,7 +20,6 @@ export interface Tab {
   sortIndex: number;
   formState: Record<string, unknown>;
   table?: TableInfo;
-  awsRegion: string;
 }
 
 export const useTabStore = create<TableState>()(
