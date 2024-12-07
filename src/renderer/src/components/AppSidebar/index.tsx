@@ -1,4 +1,4 @@
-import { Database, Settings, Package } from "lucide-react";
+import { Database, Settings, Package, Home } from "lucide-react";
 import {
   SidebarContent,
   SidebarGroup,
@@ -11,11 +11,15 @@ import {
   SidebarGroupLabel,
   SidebarMenuButton,
 } from "../SideBar";
-import { DatabaseSelector } from "./DatabaseSelector";
 import Versions from "../Versions";
 import { Link, useLocation } from "react-router-dom";
 
 const items = [
+  {
+    title: "Home",
+    url: "/",
+    icon: Home,
+  },
   {
     title: "Query Builder",
     url: "/query-builder",
@@ -37,10 +41,7 @@ export const AppSidebar = () => {
   const location = useLocation();
   return (
     <Sidebar>
-      <SidebarHeader>
-        <div>DynoView</div>
-        <DatabaseSelector />
-      </SidebarHeader>
+      <SidebarHeader className="font-semibold">DynoView</SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>

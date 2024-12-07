@@ -1,17 +1,11 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import type {} from "@redux-devtools/extension"; // required for devtools typing
-import type { TableInfo } from "@shared/table-info";
-import { id } from "./util/id";
 import { arrayMove } from "@dnd-kit/sortable";
+import type { TableInfo } from "@shared/table-info";
+import { id } from "@renderer/util/id";
 
 interface TableState {
-  setAWSRegion: (region: string) => void;
-  activeAWSRegion: string;
-
-  activeTable: TableInfo | undefined;
-  setActiveTable: (table: TableInfo | undefined) => void;
-
   tabs: Tab[];
   addNewTab: () => void;
   removeTab: (id: string) => void;
@@ -25,17 +19,13 @@ export interface Tab {
   name: string;
   sortIndex: number;
   formState: Record<string, unknown>;
+  table?: TableInfo;
 }
 
-const useTableStore = create<TableState>()(
+export const useTabStore = create<TableState>()(
   devtools(
     persist(
       (set) => ({
-        activeTable: undefined,
-        setActiveTable: (table) => set(() => ({ activeTable: table })),
-        activeAWSRegion: "ap-southeast-2",
-        setAWSRegion: (region) => set(() => ({ activeAWSRegion: region })),
-
         tabs: [{ id: id(), name: "Your first tab", sortIndex: 0, formState: {} }],
         addNewTab: () =>
           set((state) => ({
@@ -74,5 +64,3 @@ const useTableStore = create<TableState>()(
     ),
   ),
 );
-
-export default useTableStore;

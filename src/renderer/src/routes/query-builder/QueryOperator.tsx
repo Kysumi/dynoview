@@ -1,13 +1,14 @@
 import { SelectItem, Select, SelectTrigger, SelectValue, SelectContent } from "@components/Select";
+import { DynamoOperatorsEnum } from "@shared/table-query";
 
-const operators = [
-  { key: "=", label: "Equal to" },
-  { key: ">", label: "Greater than" },
-  { key: "<", label: "Less than" },
-  { key: ">=", label: "Greater than or equal to" },
-  { key: "<=", label: "Less than or equal to" },
-  { key: "between", label: "Between" },
-  { key: "begins_with", label: "Begins with" },
+const operators: { key: DynamoOperatorsEnum; label: string }[] = [
+  { key: DynamoOperatorsEnum.equals, label: "Equal to" },
+  { key: DynamoOperatorsEnum.greater_than, label: "Greater than" },
+  { key: DynamoOperatorsEnum.less_than, label: "Less than" },
+  { key: DynamoOperatorsEnum.greater_than_equals, label: "Greater than or equal to" },
+  { key: DynamoOperatorsEnum.less_than_equals, label: "Less than or equal to" },
+  { key: DynamoOperatorsEnum.between, label: "Between" },
+  { key: DynamoOperatorsEnum.begins_with, label: "Begins with" },
 ];
 
 interface SelectProps {

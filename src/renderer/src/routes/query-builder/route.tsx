@@ -16,7 +16,7 @@ import {
 import { QueryBuilder } from "./QueryBuilder";
 import { CSS } from "@dnd-kit/utilities";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/Tabs";
-import useTableStore from "@renderer/store";
+import { useTabStore } from "@renderer/store/tab-store";
 import { GripVertical, Plus, X } from "lucide-react";
 import { Button } from "@components/Button";
 import { TabProvider } from "@renderer/hooks/TabContext";
@@ -30,7 +30,7 @@ export const PageTab = ({ id, name, onRemove }: { id: string; name: string; onRe
     transition,
   };
 
-  const { updateTab } = useTableStore();
+  const { updateTab } = useTabStore();
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(name);
 
@@ -72,7 +72,7 @@ export const PageTab = ({ id, name, onRemove }: { id: string; name: string; onRe
     <div ref={setNodeRef} style={style} {...attributes}>
       <TabsTrigger className="flex items-center gap-2 h-8" key={id} value={id} asChild>
         <div>
-          <Button variant="ghost" className="cursor-move" {...listeners}>
+          <Button variant="ghost" size={"icon"} className="cursor-move" {...listeners}>
             <GripVertical />
           </Button>
 
@@ -86,12 +86,12 @@ export const PageTab = ({ id, name, onRemove }: { id: string; name: string; onRe
               onClick={(e) => e.stopPropagation()}
             />
           ) : (
-            <span className="truncate" onDoubleClick={handleDoubleClick}>
+            <span title="Double click to edit" className="truncate select-none" onDoubleClick={handleDoubleClick}>
               {name}
             </span>
           )}
 
-          <Button variant={"ghost"} onClick={() => onRemove(id)}>
+          <Button variant={"ghost"} size={"icon"} onClick={() => onRemove(id)}>
             <X className="h-4 w-4" />
           </Button>
         </div>
@@ -101,7 +101,7 @@ export const PageTab = ({ id, name, onRemove }: { id: string; name: string; onRe
 };
 
 export const QueryBuilderRoute = () => {
-  const { activeTable, tabs, rearrangeTabs, removeTab, addNewTab } = useTableStore();
+  const { tabs, rearrangeTabs, removeTab, addNewTab } = useTabStore();
   const [activeTab, setActiveTab] = useState<string>(tabs[0]?.id);
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -145,7 +145,7 @@ export const QueryBuilderRoute = () => {
             })}
           </SortableContext>
 
-          <Button className="h-8 w-8 ml-2" variant="outline" onClick={handleNewTab}>
+          <Button className="ml-2" size={"sm"} variant="outline" onClick={handleNewTab}>
             <Plus />
           </Button>
         </DndContext>
@@ -153,7 +153,7 @@ export const QueryBuilderRoute = () => {
 
       {tabs.map((tab) => (
         <TabsContent key={tab.id} value={tab.id}>
-          <TabProvider value={{ tab }}>{activeTable && <QueryBuilder />}</TabProvider>
+          <TabProvider value={{ tab }}>{<QueryBuilder />}</TabProvider>
         </TabsContent>
       ))}
     </Tabs>

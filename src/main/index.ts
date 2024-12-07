@@ -1,11 +1,11 @@
-import { app, shell, BrowserWindow, ipcMain, dialog } from "electron";
+import { app, shell, BrowserWindow, dialog } from "electron";
 import path, { join } from "node:path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
+import { attachAWSHandles } from "./aws/handles";
 const PROTOCOL_SCHEME = "dyno-view";
 
 let mainWindow: BrowserWindow;
-
 if (process.defaultApp) {
   if (process.argv.length >= 2) {
     app.setAsDefaultProtocolClient(PROTOCOL_SCHEME, process.execPath, [path.resolve(process.argv[1])]);
@@ -81,7 +81,7 @@ if (!gotTheLock) {
     });
 
     // IPC test
-    ipcMain.on("ping", () => console.log("pong"));
+    attachAWSHandles();
 
     createWindow();
 

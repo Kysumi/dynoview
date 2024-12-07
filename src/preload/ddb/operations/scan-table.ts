@@ -1,21 +1,20 @@
 import { ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { getTableClient } from "../table";
+import type { TTableScan } from "@shared/table-scan";
 
-interface ScanTableParams {
-  region: string;
-  tableName: string;
-  limit: number;
-}
-
-export const scanTable = async (params: ScanTableParams) => {
-  const { region, tableName, limit } = params;
+export const scanTable = async (params: TTableScan) => {
+  const { region, tableName, limit, accountId, roleName } = params;
 
   const command = new ScanCommand({
     TableName: tableName,
     Limit: limit,
   });
 
-  const dbClient = getTableClient(region);
+  const dbClient = await getTableClient({
+    accountId,
+    region,
+    roleName,
+  });
 
   const response = await dbClient.send(command);
 

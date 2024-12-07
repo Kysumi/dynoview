@@ -1,16 +1,19 @@
-import { DescribeTableCommand, DynamoDBClient, type KeySchemaElement } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
+import { DescribeTableCommand, type KeySchemaElement } from "@aws-sdk/client-dynamodb";
 import type { TableInfo } from "@shared/table-info";
+import { getTableClient } from "../table";
 
 export const getTableInformation = async ({
   tableName,
   region,
-}: { tableName: string; region: string }): Promise<TableInfo> => {
-  const client = DynamoDBDocument.from(
-    new DynamoDBClient({
-      region,
-    }),
-  );
+  accountId,
+  roleName,
+}: { tableName: string; region: string; accountId: string; roleName: string }): Promise<TableInfo> => {
+  const client = await getTableClient({
+    accountId,
+    region,
+    roleName,
+  });
+
   const tableInfo = await client.send(new DescribeTableCommand({ TableName: tableName }));
 
   if (tableInfo.Table === undefined) {
