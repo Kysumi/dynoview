@@ -2,7 +2,7 @@ import QueryOperator from "./QueryOperator";
 import { useEffect, useState } from "react";
 import { Controller, useForm, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TableQuery, type TTableQuery } from "@shared/table-query";
+import { DynamoOperatorsEnum, TableQuery, type TTableQuery } from "@shared/table-query";
 import type { QueryCommandOutput } from "@aws-sdk/client-dynamodb";
 import { ComboBox } from "@components/ComboBox";
 import { Button } from "@components/Button";
@@ -22,7 +22,7 @@ export const Query = () => {
   const form = useForm<TTableQuery>({
     resolver: zodResolver(TableQuery),
     defaultValues: {
-      searchKeyOperator: "begins_with",
+      searchKeyOperator: DynamoOperatorsEnum.begins_with,
       ...tab.formState,
     },
   });
