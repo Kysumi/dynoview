@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@components/Button";
 import type { ScanCommandOutput } from "@aws-sdk/lib-dynamodb";
 import { useTab } from "@renderer/hooks/TabContext";
@@ -6,12 +6,15 @@ import { AccountAndDatabaseBar } from "./components/AccountAndDatabaseBar";
 import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TableScan, type TTableScan } from "@shared/table-scan";
-import type { Tab } from "@renderer/store/tab-store";
+import { useTabStore, type Tab } from "@renderer/store/tab-store";
 import { Input } from "@renderer/components/Input";
 import { FormItem, FormLabel } from "@renderer/components/Form";
+import { ResultsTable } from "./ResultsTable";
+import { buildColumns } from "./buildColumns";
 
 export const Scan = () => {
   const { tab } = useTab();
+  const { storeTabFormState } = useTabStore();
 
   const form = useForm<TTableScan>({
     resolver: zodResolver(TableScan),
@@ -20,6 +23,14 @@ export const Scan = () => {
       ...tab.formState,
     },
   });
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: This effect should only run once
+  useEffect(() => {
+    return () => {
+      const formState = form.getValues();
+      storeTabFormState(tab.id, formState);
+    };
+  }, []);
 
   return (
     <FormProvider {...form}>
@@ -60,9 +71,8 @@ const FormContent = ({ tab }: { tab: Tab }) => {
         <Button className="max-w-fit" size={"lg"} type="submit" loading={loading}>
           Scan
         </Button>
+        <ResultsTable data={result?.Items ?? []} columns={buildColumns(result, { maxDepth: 1 })} />
       </form>
-
-      <pre>{JSON.stringify(result, null, 2)}</pre>
     </>
   );
 };
