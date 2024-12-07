@@ -34,7 +34,6 @@ export const SettingsRoute = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Name</TableHead>
-                  <TableHead>Account ID</TableHead>
                   <TableHead>Region</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
