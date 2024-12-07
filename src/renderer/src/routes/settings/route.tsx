@@ -53,8 +53,10 @@ export const SettingsRoute = () => {
                         </Link>
                       </Button>
                       <Button variant="ghost" size="icon" className="text-destructive">
-                        <Trash2 className="h-4 w-4" />
-                        <span className="sr-only">Delete</span>
+                        <>
+                          <Trash2 className="h-4 w-4" />
+                          <span className="sr-only">Delete</span>
+                        </>
                       </Button>
                     </TableCell>
                   </TableRow>

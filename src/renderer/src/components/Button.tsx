@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Slot } from "@radix-ui/react-slot";
+import { Slot, Slottable } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "./lib/utils";
 import { Link } from "react-router-dom";
@@ -40,17 +40,17 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, children, loading, disabled, ...props }, ref) => {
+  ({ className, loading = false, children, disabled, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
-        disabled={disabled || loading}
         ref={ref}
+        disabled={loading || disabled}
         {...props}
       >
-        {loading && <Loader2 className="animate-spin" />}
-        {children}
+        {loading && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
+        <Slottable>{children}</Slottable>
       </Comp>
     );
   },
