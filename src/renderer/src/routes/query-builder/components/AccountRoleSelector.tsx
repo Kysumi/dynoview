@@ -70,7 +70,6 @@ export const AccountRoleSelector = ({ accounts }: AccountRoleSelectorProps) => {
                 }
               }}
               filter={(value, search) => {
-                // Find the corresponding option to get the label
                 const option = accountOptions.find((opt) => opt.value === value);
                 if (!option) {
                   return 0;
@@ -79,7 +78,6 @@ export const AccountRoleSelector = ({ accounts }: AccountRoleSelectorProps) => {
                 // If no search term, show all options
                 if (!search) return 1;
 
-                // Convert both strings to lowercase for case-insensitive comparison
                 const searchLower = search.toLowerCase();
                 const labelLower = option.label.toLowerCase();
 
@@ -105,7 +103,7 @@ export const AccountRoleSelector = ({ accounts }: AccountRoleSelectorProps) => {
                   return 0.4;
                 }
 
-                // No match
+                // No match don't show the user this option
                 return 0;
               }}
             />
