@@ -7,13 +7,13 @@ import { ComboBox } from "@renderer/components/ComboBox";
 import { useFormContext } from "react-hook-form";
 import type { TSSOuser } from "@shared/table-query";
 import { Label } from "@renderer/components/Label";
-import useTableStore from "@renderer/store";
+import { useTabStore } from "@renderer/store/tab-store";
 import { useTab } from "@renderer/hooks/TabContext";
 
 export const DatabaseSelector = () => {
   const { watch, setValue } = useFormContext<TSSOuser>();
   const [tables, setTables] = useState<string[]>([]);
-  const { updateTab } = useTableStore();
+  const { updateTab } = useTabStore();
   const { tab } = useTab();
 
   const activeAWSRegion = tab.awsRegion;
@@ -22,26 +22,21 @@ export const DatabaseSelector = () => {
   const accountId = watch("accountId");
   const roleName = watch("roleName");
 
-  const loadTables = () => {
-    window.api
-      .listAvailableTables({ region: activeAWSRegion, accountId, roleName })
-      .then((tables) => {
-        const newAccountHasTable = tables.includes(activeTable?.tableName ?? "");
-        if (!newAccountHasTable) {
-          updateTab(tab.id, { table: undefined });
-        }
-
-        setTables(tables);
-      })
-      .catch(console.error);
-  };
-
-  /**
-   * Only run on first render
-   */
   useEffect(() => {
-    loadTables();
-  }, [accountId, roleName]);
+    if (accountId && roleName && activeAWSRegion) {
+      window.api
+        .listAvailableTables({ region: activeAWSRegion, accountId, roleName })
+        .then((tables) => {
+          const newAccountHasTable = tables.includes(activeTable?.tableName ?? "");
+          if (!newAccountHasTable) {
+            updateTab(tab.id, { table: undefined });
+          }
+
+          setTables(tables);
+        })
+        .catch(console.error);
+    }
+  }, [accountId, roleName, activeAWSRegion, activeTable?.tableName, tab.id, updateTab]);
 
   return (
     <div>

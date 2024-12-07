@@ -16,7 +16,7 @@ import {
 import { QueryBuilder } from "./QueryBuilder";
 import { CSS } from "@dnd-kit/utilities";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/Tabs";
-import useTableStore from "@renderer/store";
+import { useTabStore } from "@renderer/store/tab-store";
 import { GripVertical, Plus, X } from "lucide-react";
 import { Button } from "@components/Button";
 import { TabProvider } from "@renderer/hooks/TabContext";
@@ -30,7 +30,7 @@ export const PageTab = ({ id, name, onRemove }: { id: string; name: string; onRe
     transition,
   };
 
-  const { updateTab } = useTableStore();
+  const { updateTab } = useTabStore();
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(name);
 
@@ -101,7 +101,7 @@ export const PageTab = ({ id, name, onRemove }: { id: string; name: string; onRe
 };
 
 export const QueryBuilderRoute = () => {
-  const { tabs, rearrangeTabs, removeTab, addNewTab } = useTableStore();
+  const { tabs, rearrangeTabs, removeTab, addNewTab } = useTabStore();
   const [activeTab, setActiveTab] = useState<string>(tabs[0]?.id);
 
   const handleDragEnd = (event: DragEndEvent) => {

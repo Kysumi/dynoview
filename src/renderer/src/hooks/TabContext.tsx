@@ -1,4 +1,4 @@
-import type { Tab } from "@renderer/store";
+import type { Tab } from "@renderer/store/tab-store";
 import { createContext, type ReactNode, useContext } from "react";
 
 interface TabContextType {

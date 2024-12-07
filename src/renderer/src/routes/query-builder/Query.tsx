@@ -1,4 +1,3 @@
-import useTableStore, { type Tab } from "@renderer/store";
 import QueryOperator from "./QueryOperator";
 import { useEffect, useState } from "react";
 import { Controller, useForm, useFormContext } from "react-hook-form";
@@ -16,6 +15,7 @@ import { AccountRoleSelector } from "@renderer/components/AccountRoleSelector";
 import { useAWSStore } from "@renderer/store/aws-store";
 import { DatabaseSelector } from "./components/DatabaseSelector";
 import { Label } from "@renderer/components/Label";
+import { type Tab, useTabStore } from "@renderer/store/tab-store";
 
 const SharedStuff = () => {
   const { awsConfig } = useAWSStore();
@@ -32,7 +32,7 @@ const SharedStuff = () => {
 
 export const Query = () => {
   const { tab } = useTab();
-  const { storeTabFormState } = useTableStore();
+  const { storeTabFormState } = useTabStore();
 
   const form = useForm<TTableQuery>({
     resolver: zodResolver(TableQuery),
@@ -59,6 +59,7 @@ export const Query = () => {
 };
 
 const FormContent = ({ tab }: { tab: Tab }) => {
+  const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<QueryCommandOutput | null>(null);
   const { control, register, handleSubmit, setValue } = useFormContext();
 
@@ -72,8 +73,10 @@ const FormContent = ({ tab }: { tab: Tab }) => {
 
   const onSubmit = handleSubmit(
     async (data) => {
+      setLoading(true);
       const result = await window.api.queryTableIndex(data);
       setResult(result);
+      setLoading(false);
     },
     (errors) => {
       console.log(errors);
@@ -138,7 +141,7 @@ const FormContent = ({ tab }: { tab: Tab }) => {
         </FormItem>
       </div>
       <div>
-        <Button size={"lg"} type="submit">
+        <Button size={"lg"} type="submit" loading={loading}>
           Run Query
         </Button>
       </div>

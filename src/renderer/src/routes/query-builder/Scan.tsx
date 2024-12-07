@@ -1,11 +1,13 @@
-import useTableStore from "@renderer/store";
 import { useState } from "react";
 import { Button } from "@components/Button";
 import type { ScanCommandOutput } from "@aws-sdk/lib-dynamodb";
+import { useTab } from "@renderer/hooks/TabContext";
 
 export const Scan = () => {
   const [result, setResult] = useState<ScanCommandOutput | null>(null);
-  const { activeAWSRegion, activeTable } = useTableStore();
+  const { tab } = useTab();
+
+  const activeTable = tab.table;
 
   if (!activeTable) return null;
 
@@ -17,7 +19,7 @@ export const Scan = () => {
     const limit = formData.get("limit") as string;
 
     const result = await window.api.scanTable({
-      region: activeAWSRegion,
+      region: tab.awsRegion,
       tableName: activeTable.tableName,
       limit: Number.parseInt(limit),
     });

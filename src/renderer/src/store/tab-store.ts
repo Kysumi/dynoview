@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import type {} from "@redux-devtools/extension"; // required for devtools typing
-import { id } from "./util/id";
 import { arrayMove } from "@dnd-kit/sortable";
 import type { TableInfo } from "@shared/table-info";
+import { id } from "@renderer/util/id";
 
 interface TableState {
   tabs: Tab[];
@@ -20,10 +20,10 @@ export interface Tab {
   sortIndex: number;
   formState: Record<string, unknown>;
   table?: TableInfo;
-  awsRegion?: string;
+  awsRegion: string;
 }
 
-const useTableStore = create<TableState>()(
+export const useTabStore = create<TableState>()(
   devtools(
     persist(
       (set) => ({
@@ -65,5 +65,3 @@ const useTableStore = create<TableState>()(
     ),
   ),
 );
-
-export default useTableStore;
