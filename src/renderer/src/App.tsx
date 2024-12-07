@@ -6,6 +6,7 @@ import { HomeRoute } from "./routes/home/routes";
 import { AddSSOConfig } from "./routes/settings/add-sso-config/route";
 import { ErrorElement } from "./components/ErrorElement";
 import { EditSSOConfigRoute } from "./routes/settings/edit-sso-config/route";
+import { ThemeProvider } from "./components/ThemeProvider";
 
 const router = createHashRouter([
   {
@@ -42,7 +43,11 @@ const router = createHashRouter([
 ]);
 
 function App(): JSX.Element {
-  return <RouterProvider router={router} />;
+  return (
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <RouterProvider router={router} />
+    </ThemeProvider>
+  );
 }
 
 export default App;
