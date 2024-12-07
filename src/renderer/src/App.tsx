@@ -5,6 +5,7 @@ import { QueryBuilderRoute } from "./routes/query-builder/route";
 import { HomeRoute } from "./routes/home/routes";
 import { AddSSOConfig } from "./routes/settings/add-sso-config/route";
 import { ErrorElement } from "./components/ErrorElement";
+import { EditSSOConfigRoute } from "./routes/settings/edit-sso-config/route";
 
 const router = createHashRouter([
   {
@@ -31,6 +32,10 @@ const router = createHashRouter([
       {
         path: "/settings/add-sso-config",
         element: <AddSSOConfig />,
+      },
+      {
+        path: "/settings/edit-sso-config/:id",
+        element: <EditSSOConfigRoute />,
       },
     ],
   },

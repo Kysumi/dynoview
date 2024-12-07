@@ -2,7 +2,7 @@ import type { AWSAccount } from "@shared/aws-accounts";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@renderer/components/Table/Table";
 import { Separator } from "@renderer/components/Separator";
 
-export const AccountsTable = ({ accounts }: { accounts: AWSAccount[] }) => {
+export const AccountsTable = ({ configName, accounts }: { configName: string; accounts: AWSAccount[] }) => {
   const accountRolePairs = accounts.flatMap(
     (account) =>
       account.roles?.map((role) => ({
@@ -26,6 +26,7 @@ export const AccountsTable = ({ accounts }: { accounts: AWSAccount[] }) => {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Config Name</TableHead>
               <TableHead>Account Name</TableHead>
               <TableHead>Account ID</TableHead>
               <TableHead>Email</TableHead>
@@ -35,6 +36,7 @@ export const AccountsTable = ({ accounts }: { accounts: AWSAccount[] }) => {
           <TableBody>
             {accountRolePairs.map((pair) => (
               <TableRow key={`${pair.accountId}-${pair.roleName}`}>
+                <TableCell>{configName}</TableCell>
                 <TableCell>{pair.accountName || "-"}</TableCell>
                 <TableCell>{pair.accountId}</TableCell>
                 <TableCell>{pair.accountEmail || "-"}</TableCell>

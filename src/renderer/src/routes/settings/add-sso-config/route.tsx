@@ -8,14 +8,15 @@ import { useAWSStore } from "@renderer/store/aws-store";
 import { mapAccountsToRoles } from "@renderer/util/aws-helper";
 import { id } from "@renderer/util/id";
 import { regions } from "@shared/available-regions";
-import type { AWSAccount } from "@shared/aws-accounts";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { AccountsTable } from "../components/AccountsTable";
 import { toast } from "@renderer/hooks/use-toast";
+import { Label } from "@renderer/components/Label";
+import { useNavigate } from "react-router-dom";
 
 const ssoSchema = z.object({
+  name: z.string().min(1, "Name is required"),
   startUrl: z.string().url("Please enter a valid URL"),
   region: z.string(),
 });
@@ -25,7 +26,7 @@ type SSOFormValues = z.infer<typeof ssoSchema>;
 export const AddSSOConfig = () => {
   const { addConfig } = useAWSStore();
   const [isLoading, setIsLoading] = useState(false);
-  const [accounts, setAccounts] = useState<AWSAccount[]>([]);
+  const navigate = useNavigate();
 
   const form = useForm<SSOFormValues>({
     resolver: zodResolver(ssoSchema),
@@ -51,14 +52,15 @@ export const AddSSOConfig = () => {
       if (error) {
         throw new Error(error);
       }
-      setAccounts(accounts);
 
       addConfig({
         id: id(),
+        name: values.name,
         startUrl: values.startUrl,
         region: values.region,
         accounts,
       });
+      navigate("/settings");
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
       toast({ title: "Error", description: `Failed to setup SSO: ${errorMessage}` });
@@ -81,6 +83,18 @@ export const AddSSOConfig = () => {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <Input placeholder="My SSO" {...field} />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="startUrl"
                 render={({ field }) => (
                   <FormItem>
@@ -95,8 +109,8 @@ export const AddSSOConfig = () => {
                 control={form.control}
                 name="region"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>SSO Region</FormLabel>
+                  <div className="flex flex-col gap-2">
+                    <Label>SSO Region</Label>
                     <ComboBox
                       placeHolder="Select Region"
                       selectedOption={field.value}
@@ -106,8 +120,7 @@ export const AddSSOConfig = () => {
                       }))}
                       onChange={(option) => field.onChange(option.value)}
                     />
-                    <FormMessage />
-                  </FormItem>
+                  </div>
                 )}
               />
 
@@ -118,14 +131,6 @@ export const AddSSOConfig = () => {
           </Form>
         </CardContent>
       </Card>
-
-      {accounts.length > 0 && (
-        <Card className="w-full max-w-4xl mx-auto mt-4">
-          <CardContent>
-            <AccountsTable accounts={accounts} />
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 };
