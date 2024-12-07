@@ -13,6 +13,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { AccountsTable } from "../components/AccountsTable";
+import { toast } from "@renderer/hooks/use-toast";
 
 const ssoSchema = z.object({
   startUrl: z.string().url("Please enter a valid URL"),
@@ -59,7 +60,8 @@ export const AddSSOConfig = () => {
         accounts,
       });
     } catch (error) {
-      console.error("Failed to setup SSO:", error);
+      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+      toast({ title: "Error", description: `Failed to setup SSO: ${errorMessage}` });
     } finally {
       setIsLoading(false);
     }
