@@ -13,6 +13,7 @@ import { useTab } from "@renderer/hooks/TabContext";
 export const DatabaseSelector = () => {
   const { watch, setValue } = useFormContext<TSSOuser>();
   const [tables, setTables] = useState<string[]>([]);
+
   const { updateTab } = useTabStore();
   const { tab } = useTab();
 

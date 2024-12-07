@@ -11,24 +11,9 @@ import { Form, FormItem, FormLabel } from "@components/Form";
 import { useTab } from "@renderer/hooks/TabContext";
 import { ResultsTable } from "./ResultsTable";
 import { buildColumns } from "./buildColumns";
-import { AccountRoleSelector } from "@renderer/components/AccountRoleSelector";
-import { useAWSStore } from "@renderer/store/aws-store";
-import { DatabaseSelector } from "./components/DatabaseSelector";
 import { Label } from "@renderer/components/Label";
 import { type Tab, useTabStore } from "@renderer/store/tab-store";
-
-const SharedStuff = () => {
-  const { awsConfig } = useAWSStore();
-
-  const first = awsConfig[0];
-
-  return (
-    <div className="flex gap-2">
-      <AccountRoleSelector accounts={first.accounts} />
-      <DatabaseSelector />
-    </div>
-  );
-};
+import { AccountAndDatabaseBar } from "./components/AccountAndDatabaseBar";
 
 export const Query = () => {
   const { tab } = useTab();
@@ -52,7 +37,7 @@ export const Query = () => {
 
   return (
     <Form {...form}>
-      <SharedStuff />
+      <AccountAndDatabaseBar />
       <FormContent tab={tab} />
     </Form>
   );
@@ -140,11 +125,10 @@ const FormContent = ({ tab }: { tab: Tab }) => {
           <Input className="w-full" placeholder="Enter search key value" {...register("searchKeyValue")} />
         </FormItem>
       </div>
-      <div>
-        <Button size={"lg"} type="submit" loading={loading}>
-          Run Query
-        </Button>
-      </div>
+
+      <Button className="max-w-fit" size={"lg"} type="submit" loading={loading}>
+        Run Query
+      </Button>
       <ResultsTable data={result?.Items ?? []} columns={buildColumns(result, { maxDepth: 1 })} />
     </form>
   );

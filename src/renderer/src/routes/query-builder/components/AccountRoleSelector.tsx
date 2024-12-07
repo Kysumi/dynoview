@@ -1,11 +1,11 @@
 import type { AWSAccount } from "@shared/aws-accounts";
-import { ComboBox } from "./ComboBox";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 import type { TSSOuser } from "@shared/table-query";
-import { Popover, PopoverContent, PopoverTrigger } from "./PopOver";
 import { Users, ChevronsUpDown } from "lucide-react";
-import { Button } from "./Button";
-import { Label } from "./Label";
+import { Popover, PopoverContent, PopoverTrigger } from "@renderer/components/PopOver";
+import { Button } from "@renderer/components/Button";
+import { ComboBox } from "@renderer/components/ComboBox";
+import { Label } from "@renderer/components/Label";
 
 interface AccountRoleSelectorProps {
   accounts: AWSAccount[];
