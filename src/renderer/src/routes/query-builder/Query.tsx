@@ -103,6 +103,7 @@ const FormContent = ({ tab }: { tab: Tab }) => {
                   }
 
                   setValue("partitionKey", index.partitionKey.name);
+                  setValue("searchKey", index.searchKey.name);
                 }}
               />
             </div>

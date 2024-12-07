@@ -1,9 +1,21 @@
 import { QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { getTableClient } from "../table";
 import type { TTableQuery } from "@shared/table-query";
+import { buildQueryOperation, DynamoOperatorsEnum } from "./build-query-operation";
 
 export const queryTableIndex = async (params: TTableQuery) => {
-  const { region, tableName, indexName, partitionKey, partitionKeyValue, roleName, accountId } = params;
+  const {
+    region,
+    tableName,
+    indexName,
+    partitionKey,
+    partitionKeyValue,
+    roleName,
+    accountId,
+    searchKey,
+    searchKeyOperator,
+    searchKeyValue,
+  } = params;
 
   const dbClient = await getTableClient({
     accountId,
@@ -11,16 +23,25 @@ export const queryTableIndex = async (params: TTableQuery) => {
     roleName,
   });
 
+  const partitionKeyCondition = buildQueryOperation(partitionKey, partitionKeyValue, DynamoOperatorsEnum.equals);
+  let keyConditionExpression = partitionKeyCondition.expression;
+  let expressionAttributeValues = partitionKeyCondition.values;
+
+  if (searchKeyValue && searchKey && searchKeyOperator) {
+    const searchKeyCondition = buildQueryOperation(searchKey, searchKeyValue, searchKeyOperator);
+    keyConditionExpression += ` AND ${searchKeyCondition.expression}`;
+    expressionAttributeValues = {
+      ...expressionAttributeValues,
+      ...searchKeyCondition.values,
+    };
+  }
+
   const command = new QueryCommand({
     TableName: tableName,
     IndexName: indexName === tableName ? undefined : indexName,
-    KeyConditionExpression: `${partitionKey} = :${partitionKey}`,
-    ExpressionAttributeValues: {
-      [`:${partitionKey}`]: partitionKeyValue,
-    },
+    KeyConditionExpression: keyConditionExpression,
+    ExpressionAttributeValues: expressionAttributeValues,
   });
 
-  const response = await dbClient.send(command);
-
-  return response;
+  return await dbClient.send(command);
 };
