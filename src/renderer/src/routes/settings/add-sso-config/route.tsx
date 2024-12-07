@@ -14,8 +14,10 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { AccountsTable } from "../components/AccountsTable";
 import { toast } from "@renderer/hooks/use-toast";
+import { Label } from "@renderer/components/Label";
 
 const ssoSchema = z.object({
+  name: z.string().min(1, "Name is required"),
   startUrl: z.string().url("Please enter a valid URL"),
   region: z.string(),
 });
@@ -55,6 +57,7 @@ export const AddSSOConfig = () => {
 
       addConfig({
         id: id(),
+        name: values.name,
         startUrl: values.startUrl,
         region: values.region,
         accounts,
@@ -81,6 +84,18 @@ export const AddSSOConfig = () => {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <Input placeholder="My SSO" {...field} />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="startUrl"
                 render={({ field }) => (
                   <FormItem>
@@ -95,8 +110,8 @@ export const AddSSOConfig = () => {
                 control={form.control}
                 name="region"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>SSO Region</FormLabel>
+                  <div className="flex flex-col gap-2">
+                    <Label>SSO Region</Label>
                     <ComboBox
                       placeHolder="Select Region"
                       selectedOption={field.value}
@@ -106,8 +121,7 @@ export const AddSSOConfig = () => {
                       }))}
                       onChange={(option) => field.onChange(option.value)}
                     />
-                    <FormMessage />
-                  </FormItem>
+                  </div>
                 )}
               />
 

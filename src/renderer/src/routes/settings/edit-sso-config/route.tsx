@@ -105,7 +105,7 @@ export const EditSSOConfigRoute = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Configuration Name</FormLabel>
-                    <Input placeholder="My AWS SSO" {...field} />
+                    <Input placeholder="My SSO" {...field} />
                     <FormMessage />
                   </FormItem>
                 )}
