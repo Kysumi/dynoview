@@ -13,6 +13,8 @@ interface AWSConfig {
 interface AWSStore {
   awsConfig: AWSConfig[];
   addConfig: (config: AWSConfig) => void;
+  updateConfig: (config: AWSConfig) => void;
+  removeConfig: (id: string) => void;
 }
 
 export const useAWSStore = create<AWSStore>()(
@@ -22,6 +24,14 @@ export const useAWSStore = create<AWSStore>()(
       addConfig: (config) =>
         set((state) => ({
           awsConfig: [...state.awsConfig, config],
+        })),
+      updateConfig: (updatedConfig) =>
+        set((state) => ({
+          awsConfig: state.awsConfig.map((config) => (config.id === updatedConfig.id ? updatedConfig : config)),
+        })),
+      removeConfig: (id) =>
+        set((state) => ({
+          awsConfig: state.awsConfig.filter((config) => config.id !== id),
         })),
     }),
     {
