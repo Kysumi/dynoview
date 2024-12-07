@@ -46,11 +46,11 @@ export const Query = () => {
 const FormContent = ({ tab }: { tab: Tab }) => {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<QueryCommandOutput | null>(null);
-  const { control, register, handleSubmit, setValue } = useFormContext();
+  const { control, register, handleSubmit, setValue, watch } = useFormContext<TTableQuery>();
   const { storeTabFormState } = useTabStore();
 
   const activeTable = tab.table;
-  const activeAWSRegion = tab.awsRegion;
+  const activeAWSRegion = watch("region");
 
   if (!activeTable) return null;
 

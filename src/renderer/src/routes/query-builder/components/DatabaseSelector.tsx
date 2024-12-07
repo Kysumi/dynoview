@@ -22,11 +22,11 @@ export const DatabaseSelector = () => {
   const { updateTab } = useTabStore();
   const { tab } = useTab();
 
-  const activeAWSRegion = tab.awsRegion;
   const activeTable = tab.table;
 
   const accountId = watch("accountId");
   const roleName = watch("roleName");
+  const activeAWSRegion = watch("region");
 
   useEffect(() => {
     if (accountId && roleName && activeAWSRegion) {
@@ -56,6 +56,18 @@ export const DatabaseSelector = () => {
         </PopoverTrigger>
         <PopoverContent className="flex flex-col w-80 gap-2">
           <div className="flex flex-col gap-2">
+            <Label>Region</Label>
+            <ComboBox
+              placeHolder="Select Region"
+              selectedOption={activeAWSRegion}
+              options={regions.map((region) => ({ value: region, label: region }))}
+              onChange={(option) => {
+                updateTab(tab.id, { table: undefined });
+                setValue("region", option.value);
+              }}
+            />
+          </div>
+          <div className="flex flex-col gap-2">
             <Label>Table</Label>
             <ComboBox
               placeHolder="Select Table"
@@ -70,19 +82,6 @@ export const DatabaseSelector = () => {
                 });
                 updateTab(tab.id, { table: info });
                 setValue("tableName", info.tableName);
-              }}
-            />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <Label>Region</Label>
-            <ComboBox
-              placeHolder="Select Region"
-              selectedOption={activeAWSRegion}
-              options={regions.map((region) => ({ value: region, label: region }))}
-              onChange={(option) => {
-                updateTab(tab.id, { table: undefined, awsRegion: option.value });
-                setValue("region", option.value);
               }}
             />
           </div>
