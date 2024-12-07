@@ -65,8 +65,10 @@ export const AppSidebar = () => {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <ThemeToggle />
-        <Versions />
+        <div className="flex gap-2 items-center">
+          <Versions />
+          <ThemeToggle />
+        </div>
       </SidebarFooter>
     </Sidebar>
   );
