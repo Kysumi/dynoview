@@ -70,9 +70,9 @@ export const PageTab = ({ id, name, onRemove }: { id: string; name: string; onRe
 
   return (
     <div ref={setNodeRef} style={style} {...attributes}>
-      <TabsTrigger className="flex items-center gap-2 h-8" key={id} value={id} asChild>
+      <TabsTrigger className="flex items-center gap-2 h-8 p-0" key={id} value={id} asChild>
         <div>
-          <Button variant="ghost" size={"icon"} className="cursor-move" {...listeners}>
+          <Button variant="ghost" size={"icon"} className="cursor-move hover:outline" {...listeners}>
             <GripVertical />
           </Button>
 
@@ -91,7 +91,7 @@ export const PageTab = ({ id, name, onRemove }: { id: string; name: string; onRe
             </span>
           )}
 
-          <Button variant={"ghost"} size={"icon"} onClick={() => onRemove(id)}>
+          <Button className="hover:outline" variant={"ghost"} size={"icon"} onClick={() => onRemove(id)}>
             <X className="h-4 w-4" />
           </Button>
         </div>
@@ -145,7 +145,7 @@ export const QueryBuilderRoute = () => {
             })}
           </SortableContext>
 
-          <Button className="ml-2" size={"sm"} variant="outline" onClick={handleNewTab}>
+          <Button size={"sm"} variant="outline" className="hover:outline" onClick={handleNewTab}>
             <Plus />
           </Button>
         </DndContext>
