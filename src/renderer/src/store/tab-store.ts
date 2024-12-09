@@ -22,6 +22,7 @@ export interface Tab {
   formState: Record<string, unknown>;
   table?: TableInfo;
   queryType: QueryType;
+  queryResult?: Record<string, unknown>[];
 }
 
 const defaultTabName = "New tab";

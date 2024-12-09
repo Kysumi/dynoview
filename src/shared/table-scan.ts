@@ -10,6 +10,7 @@ export const TableScan = z
     region: z.string(),
     tableName: z.string(),
     limit: z.number(),
+    nextPage: z.object({}).optional(),
   })
   .merge(SSOuser);
 
