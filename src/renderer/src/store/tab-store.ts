@@ -10,9 +10,10 @@ interface TableState {
   addNewTab: () => void;
   removeTab: (id: string) => void;
   rearrangeTabs: (oldIndex: number, newIndex: number) => void;
-  storeTabFormState: (id: string, formState: Record<string, unknown>) => void;
+  storeTabFormState: (id: string, formState: Record<string, unknown>, queryType: QueryType) => void;
   updateTab: (id: string, updates: Partial<Omit<Tab, "id">>) => void;
 }
+export type QueryType = "query" | "scan";
 
 export interface Tab {
   id: string;
@@ -20,17 +21,35 @@ export interface Tab {
   sortIndex: number;
   formState: Record<string, unknown>;
   table?: TableInfo;
+  queryType: QueryType;
 }
+
+const defaultTabName = "New tab";
 
 export const useTabStore = create<TableState>()(
   devtools(
     persist(
       (set) => ({
-        tabs: [{ id: id(), name: "Your first tab", sortIndex: 0, formState: {} }],
+        tabs: [{ id: id(), name: "Your first tab", sortIndex: 0, formState: {}, queryType: "query" }],
         addNewTab: () =>
-          set((state) => ({
-            tabs: [...state.tabs, { id: id(), name: "New tab", sortIndex: state.tabs.length, formState: {} }],
-          })),
+          set((state) => {
+            // get the count of tabs with the name New Tab
+            const tabs = state.tabs.filter((tab) => tab.name.includes(defaultTabName));
+            console.log(tabs, state.tabs);
+
+            return {
+              tabs: [
+                ...state.tabs,
+                {
+                  id: id(),
+                  name: `${defaultTabName}${tabs.length === 0 ? "" : ` (${tabs.length})`}`,
+                  sortIndex: state.tabs.length,
+                  formState: {},
+                  queryType: "query",
+                },
+              ],
+            };
+          }),
         rearrangeTabs: (oldIndex, newIndex) => {
           set((state) => {
             const tabs = arrayMove(state.tabs, oldIndex, newIndex);
@@ -46,11 +65,11 @@ export const useTabStore = create<TableState>()(
           set((state) => ({
             tabs: state.tabs.map((tab) => (tab.id === id ? { ...tab, ...updates } : tab)),
           })),
-        storeTabFormState: (id, formState) =>
+        storeTabFormState: (id, formState, queryType) =>
           set((state) => {
             const tabs = state.tabs.map((tab) => {
               if (tab.id === id) {
-                return { ...tab, formState };
+                return { ...tab, formState, queryType };
               }
               return tab;
             });

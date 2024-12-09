@@ -31,7 +31,7 @@ export const Query = () => {
   useEffect(() => {
     return () => {
       const formState = form.getValues();
-      storeTabFormState(tab.id, formState);
+      storeTabFormState(tab.id, formState, "query");
     };
   }, []);
 
@@ -62,7 +62,7 @@ const FormContent = ({ tab }: { tab: Tab }) => {
       setLoading(true);
       // We want to store the formstate at the time of query
       // so that they can leave the app and return to the same state
-      storeTabFormState(tab.id, data);
+      storeTabFormState(tab.id, data, "query");
       const result = await window.api.queryTableIndex(data);
       setResult(result);
       setLoading(false);
