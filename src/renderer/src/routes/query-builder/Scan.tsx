@@ -13,6 +13,7 @@ import { ResultsTable } from "./ResultsTable";
 import { buildColumns } from "./buildColumns";
 import { useToast } from "@renderer/hooks/use-toast";
 import type { TableDataType } from "@renderer/components/Table/TableDataType";
+import { QueryStats } from "@renderer/components/QueryStats";
 
 export const Scan = () => {
   const { tab } = useTab();
@@ -108,9 +109,12 @@ const FormContent = ({ tab }: { tab: Tab }) => {
           </Button>
 
           {results.length > 0 && (
-            <div className="text-sm text-muted-foreground">
-              Retrieved {allItems.length} items • Scanned {totalScanned} items • Consumed {totalConsumed.toFixed(2)} RCU
-            </div>
+            <QueryStats
+              retrievedItems={allItems.length}
+              scannedItems={totalScanned}
+              consumedCapacity={totalConsumed}
+              queryType="scan"
+            />
           )}
         </div>
       </form>
