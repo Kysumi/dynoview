@@ -4,13 +4,19 @@ import type {} from "@redux-devtools/extension"; // required for devtools typing
 import { arrayMove } from "@dnd-kit/sortable";
 import type { TableInfo } from "@shared/table-info";
 import { id } from "@renderer/util/id";
+import type { DynamoResults } from "@shared/dynamo-results";
 
 interface TableState {
   tabs: Tab[];
   addNewTab: () => void;
   removeTab: (id: string) => void;
   rearrangeTabs: (oldIndex: number, newIndex: number) => void;
-  storeTabFormState: (id: string, formState: Record<string, unknown>, queryType: QueryType) => void;
+  storeTabFormState: (
+    id: string,
+    formState: Record<string, unknown>,
+    queryType: QueryType,
+    queryResult: DynamoResults[],
+  ) => void;
   updateTab: (id: string, updates: Partial<Omit<Tab, "id">>) => void;
 }
 export type QueryType = "query" | "scan";
@@ -22,7 +28,7 @@ export interface Tab {
   formState: Record<string, unknown>;
   table?: TableInfo;
   queryType: QueryType;
-  queryResult?: Record<string, unknown>[];
+  queryResult?: DynamoResults[];
 }
 
 const defaultTabName = "New tab";
@@ -66,11 +72,11 @@ export const useTabStore = create<TableState>()(
           set((state) => ({
             tabs: state.tabs.map((tab) => (tab.id === id ? { ...tab, ...updates } : tab)),
           })),
-        storeTabFormState: (id, formState, queryType) =>
+        storeTabFormState: (id, formState, queryType, queryResult) =>
           set((state) => {
             const tabs = state.tabs.map((tab) => {
               if (tab.id === id) {
-                return { ...tab, formState, queryType };
+                return { ...tab, formState, queryType, queryResult };
               }
               return tab;
             });

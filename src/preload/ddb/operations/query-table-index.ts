@@ -17,6 +17,7 @@ export const queryTableIndex = async (params: TTableQuery): Promise<DynamoResult
     searchKeyOperator,
     searchKeyValue,
     nextPage,
+    limit,
   } = params;
 
   const dbClient = await getTableClient({
@@ -46,6 +47,7 @@ export const queryTableIndex = async (params: TTableQuery): Promise<DynamoResult
     ExpressionAttributeValues: expressionAttributeValues,
     ExclusiveStartKey: nextPage,
     ReturnConsumedCapacity: "TOTAL",
+    Limit: limit,
   });
 
   const start = performance.now();

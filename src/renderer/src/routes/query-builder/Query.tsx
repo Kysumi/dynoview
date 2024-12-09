@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Controller, useForm, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DynamoOperatorsEnum, TableQuery, type TTableQuery } from "@shared/table-query";
@@ -20,23 +20,15 @@ import { QueryStats } from "@renderer/components/QueryStats";
 
 export const Query = () => {
   const { tab } = useTab();
-  const { storeTabFormState } = useTabStore();
 
   const form = useForm<TTableQuery>({
     resolver: zodResolver(TableQuery),
     defaultValues: {
+      limit: 250,
       searchKeyOperator: DynamoOperatorsEnum.begins_with,
       ...tab.formState,
     },
   });
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: This effect should only run once
-  useEffect(() => {
-    return () => {
-      const formState = form.getValues();
-      storeTabFormState(tab.id, formState, "query");
-    };
-  }, []);
 
   return (
     <Form {...form}>
@@ -48,7 +40,7 @@ export const Query = () => {
 
 const FormContent = ({ tab }: { tab: Tab }) => {
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<DynamoResults[]>([]);
+  const [results, setResults] = useState<DynamoResults[]>(tab.queryResult ?? []);
   const [hasMore, setHasMore] = useState(false);
   const { toast } = useToast();
   const { storeTabFormState } = useTabStore();
@@ -66,14 +58,18 @@ const FormContent = ({ tab }: { tab: Tab }) => {
     setLoading(true);
     try {
       const values = watch();
-      storeTabFormState(tab.id, values, "query");
 
       const result = await window.api.queryTableIndex({
         ...values,
         nextPage,
       });
 
-      setResults((prev) => (nextPage ? [...prev, result] : [result]));
+      setResults((prev) => {
+        const toShow = nextPage ? [...prev, result] : [result];
+        storeTabFormState(tab.id, values, "query", toShow);
+
+        return toShow;
+      });
       setHasMore(!!result.nextPage);
     } catch (error) {
       toast({
@@ -106,7 +102,6 @@ const FormContent = ({ tab }: { tab: Tab }) => {
     <form className="flex flex-col gap-2 mt-2" onSubmit={onSubmit}>
       <input type="hidden" {...register("tableName")} value={activeTable.tableName} />
       <input type="hidden" {...register("region")} value={activeAWSRegion} />
-      <input type="hidden" {...register("limit", { valueAsNumber: true })} value={50} />
 
       {/* Index Selection */}
       <Controller
@@ -161,6 +156,11 @@ const FormContent = ({ tab }: { tab: Tab }) => {
         <FormItem className="flex-1">
           <FormLabel>Search Key Value</FormLabel>
           <Input className="w-full" placeholder="Enter search key value" {...register("searchKeyValue")} />
+        </FormItem>
+
+        <FormItem className="max-w-sm">
+          <FormLabel>Items per page</FormLabel>
+          <Input type="number" min={1} max={1000} {...register("limit", { valueAsNumber: true })} />
         </FormItem>
       </div>
 

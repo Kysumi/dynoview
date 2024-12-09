@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@components/Button";
 import type { DynamoResults } from "@shared/dynamo-results";
 import { useTab } from "@renderer/hooks/TabContext";
@@ -17,7 +17,6 @@ import { QueryStats } from "@renderer/components/QueryStats";
 
 export const Scan = () => {
   const { tab } = useTab();
-  const { storeTabFormState } = useTabStore();
 
   const form = useForm<TTableScan>({
     resolver: zodResolver(TableScan),
@@ -26,14 +25,6 @@ export const Scan = () => {
       ...tab.formState,
     },
   });
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: only run once
-  useEffect(() => {
-    return () => {
-      const formState = form.getValues();
-      storeTabFormState(tab.id, formState, "scan");
-    };
-  }, []);
 
   return (
     <FormProvider {...form}>
@@ -45,7 +36,7 @@ export const Scan = () => {
 
 const FormContent = ({ tab }: { tab: Tab }) => {
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<DynamoResults[]>([]);
+  const [results, setResults] = useState<DynamoResults[]>(tab.queryResult ?? []);
   const [hasMore, setHasMore] = useState(false);
 
   const { toast } = useToast();
@@ -60,14 +51,18 @@ const FormContent = ({ tab }: { tab: Tab }) => {
     setLoading(true);
     try {
       const values = getValues();
-      storeTabFormState(tab.id, values, "scan");
 
       const result = await window.api.scanTable({
         ...values,
         nextPage,
       });
 
-      setResults((prev) => (nextPage ? [...prev, result] : [result]));
+      setResults((prev) => {
+        const toShow = nextPage ? [...prev, result] : [result];
+        storeTabFormState(tab.id, values, "scan", toShow);
+
+        return toShow;
+      });
       setHasMore(!!result.nextPage);
     } catch (error) {
       toast({
@@ -100,7 +95,7 @@ const FormContent = ({ tab }: { tab: Tab }) => {
     <div className="space-y-4">
       <form className="space-y-4" onSubmit={onSubmit}>
         <FormItem className="max-w-sm">
-          <FormLabel>Items per Page</FormLabel>
+          <FormLabel>Items per page</FormLabel>
           <Input type="number" min={1} max={1000} {...register("limit", { valueAsNumber: true })} />
         </FormItem>
 
