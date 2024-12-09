@@ -70,7 +70,7 @@ export const PageTab = ({ id, name, onRemove }: { id: string; name: string; onRe
 
   return (
     <div ref={setNodeRef} style={style} {...attributes}>
-      <TabsTrigger className="flex items-center gap-2 h-8" key={id} value={id} asChild>
+      <TabsTrigger className="flex items-center gap-2 h-8 p-0" key={id} value={id} asChild>
         <div>
           <Button variant="ghost" size={"icon"} className="cursor-move" {...listeners}>
             <GripVertical />
@@ -137,20 +137,20 @@ export const QueryBuilderRoute = () => {
 
   return (
     <Tabs value={activeTab} onValueChange={(id) => setActiveTab(id)}>
-      <TabsList>
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={tabs} strategy={verticalListSortingStrategy}>
-            {tabs.map((tab) => {
-              return <PageTab key={tab.id} id={tab.id} name={tab.name} onRemove={handleRemove} />;
-            })}
-          </SortableContext>
-
-          <Button className="ml-2" size={"sm"} variant="outline" onClick={handleNewTab}>
-            <Plus />
-          </Button>
-        </DndContext>
-      </TabsList>
-
+      <div className="flex items-center gap-2">
+        <TabsList className="w-full justify-start overflow-x-auto">
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={tabs} strategy={verticalListSortingStrategy}>
+              {tabs.map((tab) => {
+                return <PageTab key={tab.id} id={tab.id} name={tab.name} onRemove={handleRemove} />;
+              })}
+            </SortableContext>
+          </DndContext>
+        </TabsList>
+        <Button size={"icon"} variant="outline" onClick={handleNewTab}>
+          <Plus />
+        </Button>
+      </div>
       {tabs.map((tab) => (
         <TabsContent key={tab.id} value={tab.id}>
           <TabProvider value={{ tab }}>{<QueryBuilder />}</TabProvider>

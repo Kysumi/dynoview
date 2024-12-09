@@ -36,19 +36,14 @@ export const buildColumns = (data: unknown, options: BuildColumnsOptions = {}): 
     }
   };
 
-  const processItems = (items: unknown[]) => {
-    if (!Array.isArray(items) || !items.length) return;
+  if (!Array.isArray(data) || !data.length) {
+    return [];
+  }
 
-    // Take the first item as a sample for column structure
-    const sampleItem = items[0];
-    if (typeof sampleItem === "object" && sampleItem !== null) {
-      flattenObject(sampleItem as Record<string, unknown>);
-    }
-  };
-
-  if (typeof data === "object" && data !== null) {
-    const items = (data as Record<string, unknown[]>).Items;
-    processItems(items);
+  // Take the first item as a sample for column structure
+  const sampleItem = data[0];
+  if (typeof sampleItem === "object" && sampleItem !== null) {
+    flattenObject(sampleItem as Record<string, unknown>);
   }
 
   const sortedColumns = Array.from(columns)

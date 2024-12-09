@@ -1,8 +1,11 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/Tabs";
 import { Query } from "./Query";
 import { Scan } from "./Scan";
+import type { ReactElement } from "react";
+import type { QueryType } from "@renderer/store/tab-store";
+import { useTab } from "@renderer/hooks/TabContext";
 
-const tabs = [
+const tabs: { id: QueryType; label: string; content: ReactElement }[] = [
   {
     id: "query",
     label: "Query",
@@ -16,8 +19,9 @@ const tabs = [
 ];
 
 export const QueryBuilder = () => {
+  const { tab } = useTab();
   return (
-    <Tabs defaultValue="query">
+    <Tabs defaultValue={tab.queryType}>
       <TabsList>
         {tabs.map((tab) => {
           return (

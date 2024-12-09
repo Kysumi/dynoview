@@ -37,6 +37,7 @@ export const TableQuery = z
     searchKeyOperator: ddbOperators,
 
     limit: z.number().optional(),
+    nextPage: z.object({}).optional(),
   })
   .merge(SSOuser);
 

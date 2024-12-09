@@ -41,6 +41,8 @@ export const useSSOStore = create<SSOState>()(
     }),
     {
       name: "sso",
+      partialize: (state) =>
+        Object.fromEntries(Object.entries(state).filter(([key]) => !["isInitializing"].includes(key))),
     },
   ),
 );

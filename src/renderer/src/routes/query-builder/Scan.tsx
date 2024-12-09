@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "@components/Button";
-import type { ScanCommandOutput } from "@aws-sdk/lib-dynamodb";
+import type { DynamoResults } from "@shared/dynamo-results";
 import { useTab } from "@renderer/hooks/TabContext";
 import { AccountAndDatabaseBar } from "./components/AccountAndDatabaseBar";
 import { FormProvider, useForm, useFormContext } from "react-hook-form";
@@ -11,6 +11,9 @@ import { Input } from "@renderer/components/Input";
 import { FormItem, FormLabel } from "@renderer/components/Form";
 import { ResultsTable } from "./ResultsTable";
 import { buildColumns } from "./buildColumns";
+import { useToast } from "@renderer/hooks/use-toast";
+import type { TableDataType } from "@renderer/components/Table/TableDataType";
+import { QueryStats } from "@renderer/components/QueryStats";
 
 export const Scan = () => {
   const { tab } = useTab();
@@ -24,11 +27,10 @@ export const Scan = () => {
     },
   });
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: This effect should only run once
   useEffect(() => {
     return () => {
       const formState = form.getValues();
-      storeTabFormState(tab.id, formState);
+      storeTabFormState(tab.id, formState, "scan");
     };
   }, []);
 
@@ -42,41 +44,97 @@ export const Scan = () => {
 
 const FormContent = ({ tab }: { tab: Tab }) => {
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<ScanCommandOutput | null>(null);
+  const [results, setResults] = useState<DynamoResults[]>([]);
+  const [hasMore, setHasMore] = useState(false);
+
+  const { toast } = useToast();
   const { storeTabFormState } = useTabStore();
 
-  const { register, handleSubmit } = useFormContext<TTableScan>();
+  const { register, handleSubmit, getValues } = useFormContext<TTableScan>();
   const activeTable = tab.table;
 
   if (!activeTable) return null;
 
-  const onSubmit = handleSubmit(async (data) => {
+  const performScan = async (nextPage?: Record<string, unknown>) => {
     setLoading(true);
-    // We want to store the formstate at the time of query
-    // so that they can leave the app and return to the same state
-    storeTabFormState(tab.id, data);
+    try {
+      const values = getValues();
+      storeTabFormState(tab.id, values, "scan");
 
-    const result = await window.api.scanTable(data).catch(() => {
-      return null;
-    });
+      const result = await window.api.scanTable({
+        ...values,
+        nextPage,
+      });
 
-    setResult(result);
-    setLoading(false);
+      setResults((prev) => (nextPage ? [...prev, result] : [result]));
+      setHasMore(!!result.nextPage);
+    } catch (error) {
+      toast({
+        title: "Scan Failed",
+        description: error instanceof Error ? error.message : "An error occurred while scanning the table",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLoadMore = () => {
+    const lastResult = results[results.length - 1];
+    if (lastResult?.nextPage) {
+      performScan(lastResult.nextPage);
+    }
+  };
+
+  const onSubmit = handleSubmit(() => {
+    setResults([]);
+    performScan();
   });
 
+  const allItems = results.flatMap((r) => r.items);
+  const totalScanned = results.reduce((acc, r) => acc + r.scannedCount, 0);
+  const totalConsumed = results.reduce((acc, r) => acc + (r.consumedCapacity ?? 0), 0);
+
   return (
-    <>
-      <form className="flex flex-col gap-2 mt-2" onSubmit={onSubmit}>
+    <div className="space-y-4">
+      <form className="space-y-4" onSubmit={onSubmit}>
         <FormItem className="max-w-sm">
-          <FormLabel>Limit</FormLabel>
-          <Input type="number" {...register("limit")} />
+          <FormLabel>Items per Page</FormLabel>
+          <Input type="number" min={1} max={1000} {...register("limit", { valueAsNumber: true })} />
         </FormItem>
 
-        <Button className="max-w-fit" size={"lg"} type="submit" loading={loading}>
-          Scan
-        </Button>
-        <ResultsTable data={result?.Items ?? []} columns={buildColumns(result, { maxDepth: 1 })} />
+        <div className="flex justify-between items-center">
+          <Button size="lg" type="submit" loading={loading && results.length === 0}>
+            Scan
+          </Button>
+
+          {results.length > 0 && (
+            <QueryStats
+              retrievedItems={allItems.length}
+              scannedItems={totalScanned}
+              consumedCapacity={totalConsumed}
+              queryType="scan"
+            />
+          )}
+        </div>
       </form>
-    </>
+
+      {allItems.length > 0 && (
+        <div className="space-y-4">
+          <ResultsTable
+            data={allItems as TableDataType[]}
+            columns={buildColumns(allItems as unknown[], { maxDepth: 1 })}
+          />
+
+          {hasMore && (
+            <div className="flex justify-center">
+              <Button variant="outline" onClick={handleLoadMore} loading={loading} disabled={loading}>
+                Load More
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 };
