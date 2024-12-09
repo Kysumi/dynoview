@@ -27,6 +27,7 @@ export const Scan = () => {
     },
   });
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: only run once
   useEffect(() => {
     return () => {
       const formState = form.getValues();
