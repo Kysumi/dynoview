@@ -3,6 +3,7 @@ import path, { join } from "node:path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.png?asset";
 import { attachAWSHandles } from "./aws/handles";
+
 const PROTOCOL_SCHEME = "dyno-view";
 
 let mainWindow: BrowserWindow;

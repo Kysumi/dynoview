@@ -22,8 +22,6 @@ export const scanTable = async (params: TTableScan): Promise<DynamoResults> => {
   const response = await dbClient.send(command);
   const end = performance.now();
 
-  console.log("ScanTable response", JSON.stringify(response, null, 2));
-
   return {
     items: response.Items as Record<string, unknown>[],
     count: response.Count ?? 0,
