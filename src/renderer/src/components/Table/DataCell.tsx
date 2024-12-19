@@ -6,7 +6,7 @@ export const DataCell = ({ column, getValue }) => {
   }
 
   if (Array.isArray(value)) {
-    return <div>Not supported</div>;
+    return <div>{JSON.stringify(value)}</div>;
   }
 
   if (typeof value === "object") {
