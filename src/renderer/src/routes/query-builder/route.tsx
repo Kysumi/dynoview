@@ -125,7 +125,7 @@ export const QueryBuilderRoute = () => {
   };
 
   const handleNewTab = () => {
-    addNewTab();
+    addNewTab(activeTab);
   };
 
   const sensors = useSensors(

@@ -7,7 +7,7 @@ import { id } from "@renderer/util/id";
 
 interface TableState {
   tabs: Tab[];
-  addNewTab: () => void;
+  addNewTab: (activeTab: string) => void;
   removeTab: (id: string) => void;
   rearrangeTabs: (oldIndex: number, newIndex: number) => void;
   storeTabFormState: (id: string, formState: Record<string, unknown>, queryType: QueryType) => void;
@@ -32,11 +32,21 @@ export const useTabStore = create<TableState>()(
     persist(
       (set) => ({
         tabs: [{ id: id(), name: "Your first tab", sortIndex: 0, formState: {}, queryType: "query" }],
-        addNewTab: () =>
+        addNewTab: (activeTab: string) =>
           set((state) => {
             // get the count of tabs with the name New Tab
             const tabs = state.tabs.filter((tab) => tab.name.includes(defaultTabName));
-            console.log(tabs, state.tabs);
+            const previousFormState = state.tabs.find((tab) => {
+              return tab.id === activeTab;
+            });
+
+            const accountConfig = {
+              accountId: previousFormState?.formState.accountId,
+              roleName: previousFormState?.formState.roleName,
+              region: previousFormState?.formState.region,
+              tableName: previousFormState?.formState.tableName,
+              indexName: previousFormState?.formState.indexName,
+            };
 
             return {
               tabs: [
@@ -45,7 +55,7 @@ export const useTabStore = create<TableState>()(
                   id: id(),
                   name: `${defaultTabName}${tabs.length === 0 ? "" : ` (${tabs.length})`}`,
                   sortIndex: state.tabs.length,
-                  formState: {},
+                  formState: { ...accountConfig },
                   queryType: "query",
                 },
               ],
