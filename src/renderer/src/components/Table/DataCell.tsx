@@ -6,7 +6,7 @@ export const DataCell = ({ column, getValue }) => {
   }
 
   if (Array.isArray(value)) {
-    return <div>Not supported</div>;
+    return <div>{JSON.stringify(value)}</div>;
   }
 
   if (typeof value === "object") {
@@ -27,7 +27,7 @@ export const DataCell = ({ column, getValue }) => {
   if (typeof value === "number") {
     return <div>{value}</div>;
   }
-
+  console.error(value);
   console.log(value);
   throw new Error(`Unsupported data type for ${column.id}`);
 };
