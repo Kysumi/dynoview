@@ -1,23 +1,20 @@
 import path from "node:path";
 import fs from "node:fs";
+import type { TokenStore } from "./sso";
 import { app, safeStorage } from "electron";
 
-export class SecureLocalStore {
+export class SecureStore implements TokenStore {
   private path: string;
 
   constructor(filename: string) {
     this.path = path.join(app.getPath("userData"), `${filename}.encrypted`);
   }
 
-  get(key: string): Record<string, unknown> | undefined {
+  get<ReturnType extends Record<string, unknown>>(key: string): ReturnType | undefined {
     try {
-      // Read encrypted data from file
       const encryptedData = fs.readFileSync(this.path);
-
-      // Decrypt the data
       const decrypted = safeStorage.decryptString(encryptedData);
 
-      // Parse the decrypted JSON string
       const data = JSON.parse(decrypted);
       return data[key];
     } catch {
@@ -28,7 +25,6 @@ export class SecureLocalStore {
   set(key: string, value: Record<string, unknown>): void {
     let data = {};
     try {
-      // Try to read and decrypt existing data
       const encryptedData = fs.readFileSync(this.path);
       const decrypted = safeStorage.decryptString(encryptedData);
       data = JSON.parse(decrypted);
@@ -36,14 +32,12 @@ export class SecureLocalStore {
       // File doesn't exist yet, that's ok
     }
 
-    // Merge new data
+    // Upsert the key value pair
     data = { ...data, [key]: value };
 
-    // Convert to JSON string and encrypt
     const jsonString = JSON.stringify(data);
     const encrypted = safeStorage.encryptString(jsonString);
 
-    // Write encrypted data to file
     fs.writeFileSync(this.path, encrypted);
   }
 }
