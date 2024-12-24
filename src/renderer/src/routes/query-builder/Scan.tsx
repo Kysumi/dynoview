@@ -32,7 +32,7 @@ export const Scan = () => {
       const formState = form.getValues();
       storeTabFormState(tab.id, formState, "scan");
     };
-  }, []);
+  }, [form.getValues, storeTabFormState, tab.id]);
 
   return (
     <FormProvider {...form}>

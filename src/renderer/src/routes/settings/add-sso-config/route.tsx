@@ -43,11 +43,11 @@ export const AddSSOConfig = () => {
       });
 
       // Start SSO flow and get token
-      const { accessToken } = await window.electron.ipcRenderer.invoke("aws:start-sso");
+      await window.electron.ipcRenderer.invoke("aws:authorise-device");
 
       // Get accounts with their roles
       // We can likely move this to within the node process
-      const { accounts, error } = await mapAccountsToRoles(accessToken);
+      const { accounts, error } = await mapAccountsToRoles();
 
       if (error) {
         throw new Error(error);

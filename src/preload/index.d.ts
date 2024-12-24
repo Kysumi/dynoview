@@ -11,7 +11,6 @@ declare global {
     electron: ElectronAPI & {
       ipcRenderer: {
         invoke(channel: "aws:init-sso", config: { startUrl: string; region: string }): Promise<boolean>;
-        invoke(channel: "aws:start-sso"): Promise<Token>;
         invoke(
           channel: "aws:list-roles",
           params: Token,

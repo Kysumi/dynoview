@@ -1,6 +1,5 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
-import { createAWSCredentialsFromSSOToken } from "./create-credentials";
 import { electronAPI } from "@electron-toolkit/preload";
 
 interface TableClientArgs {
@@ -10,14 +9,10 @@ interface TableClientArgs {
 }
 
 export const getTableClient = async ({ region, roleName, accountId }: TableClientArgs) => {
-  const token = await electronAPI.ipcRenderer.invoke("aws:get-token");
-
   try {
-    const credentials = await createAWSCredentialsFromSSOToken({
-      accessToken: token.accessToken,
-      region,
-      accountId,
+    const credentials = await electronAPI.ipcRenderer.invoke("aws:get-credentials", {
       roleName,
+      accountId,
     });
 
     return DynamoDBDocument.from(

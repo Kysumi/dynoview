@@ -30,13 +30,12 @@ export const Query = () => {
     },
   });
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: This effect should only run once
   useEffect(() => {
     return () => {
       const formState = form.getValues();
       storeTabFormState(tab.id, formState, "query");
     };
-  }, []);
+  }, [form.getValues, storeTabFormState, tab.id]);
 
   return (
     <Form {...form}>

@@ -1,13 +1,12 @@
 import type { AccountRoleMapping, AWSAccount } from "@shared/aws-accounts";
 
-export async function mapAccountsToRoles(accessToken: string): Promise<AccountRoleMapping> {
+export async function mapAccountsToRoles(): Promise<AccountRoleMapping> {
   try {
-    const accounts = await window.electron.ipcRenderer.invoke("aws:list-accounts", accessToken);
+    const accounts = await window.electron.ipcRenderer.invoke("aws:list-accounts");
 
     const accountPromises = accounts.map(async (account: AWSAccount) => {
       try {
         const roles = await window.electron.ipcRenderer.invoke("aws:list-roles", {
-          accessToken,
           accountId: account.accountId,
         });
 

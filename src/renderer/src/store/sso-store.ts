@@ -26,7 +26,7 @@ export const useSSOStore = create<SSOState>()(
 
         set({ isInitializing: true });
         try {
-          const token = await window.electron.ipcRenderer.invoke("aws:get-token");
+          const token = await window.electron.ipcRenderer.invoke("aws:authorise-device");
 
           set({
             expiresAt: token.expiresAt,
